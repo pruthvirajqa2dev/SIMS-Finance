@@ -5,7 +5,6 @@ describe('SIMS Finance Trial', () => {
 
   it('Check if Up', () => {
 
-    //cy.visit('https://uat-v2.pecuniam-online.co.uk/auth/esr.elogin',{failOnStatusCode: false})
 
     const errorMsg = '502 - Web server received an invalid response while acting as a gateway or proxy server.'
     cy.get('h2', { timeout: 0 })
@@ -19,29 +18,29 @@ describe('SIMS Finance Trial', () => {
     // failing the test
     return false
   })
-  it.only('Create a new single line purchase order as a Fin Clerk', () => {
+  it('Create a new single line purchase order as a Fin Clerk', () => {
 
     //const username = '7ebddd7ed8863753da3b357bed62d122'
     const username = 'FINCLERK01D130'
-    const password= 'SIMSFinance2018#'
+    const password = 'SIMSFinance2018#'
     const screen = 'RSS310Q'
-    let supplierNamesArr = ["YPO","British Telecom","Sportscene","Digicom Computers",
-      "3663","Eastern Water Authority","The Consortium","Global Construction Ltd","OVO Energy",
-      "Promethean Limited","Jones & Co - Solicitors","ESPO","Southern Examination Board","GLS",
+    let supplierNamesArr = ["YPO", "British Telecom", "Sportscene", "Digicom Computers",
+      "3663", "Eastern Water Authority", "The Consortium", "Global Construction Ltd", "OVO Energy",
+      "Promethean Limited", "Jones & Co - Solicitors", "ESPO", "Southern Examination Board", "GLS",
       "ABC Personnel Services"]
-    const supplierName = String(supplierNamesArr[Math.floor(Math.random()*supplierNamesArr.length)])
+    const supplierName = String(supplierNamesArr[Math.floor(Math.random() * supplierNamesArr.length)])
     const supplierItemRefText = 'Test item reference'
     const descText = "Test description"
     const descText1 = "Test description 1"
     const descText2 = "Test description 2"
     const descText3 = "Test description 3"
-    let quantArr = [1.2,2.3,3.4,4.5,5.6,6.7,7.8,8.9,9.1]
-    const quantity = String(quantArr[Math.floor(Math.random()*quantArr.length)])
-    let unitPriceArr = [120.12,230.23,340.34,450.45,560.56,670.67,780.78]
-    const unitprice = String(unitPriceArr[Math.floor(Math.random()*unitPriceArr.length)])
+    let quantArr = [1.2, 2.3, 3.4, 4.5, 5.6, 6.7, 7.8, 8.9, 9.1]
+    const quantity = String(quantArr[Math.floor(Math.random() * quantArr.length)])
+    let unitPriceArr = [120.12, 230.23, 340.34, 450.45, 560.56, 670.67, 780.78]
+    const unitprice = String(unitPriceArr[Math.floor(Math.random() * unitPriceArr.length)])
 
-    let vatCodeArr = ["EXM","NON","RED","STD","ZER"]
-    const vatCode = vatCodeArr[Math.floor(Math.random()*vatCodeArr.length)]
+    let vatCodeArr = ["EXM", "NON", "RED", "STD", "ZER"]
+    const vatCode = vatCodeArr[Math.floor(Math.random() * vatCodeArr.length)]
     const costCentre = "Music Lessons"
     const completedOrderText = "The following 1 Purchase Order(s) have been created."
 
@@ -184,8 +183,8 @@ describe('SIMS Finance Trial', () => {
     cy.get('[axes="UNIT_PRICE"] > div')
       .invoke('text')
       .should("contain", unitprice)
-    
-    const totalOrderValue = Math.round((quantity * unitprice)*100)/100
+
+    const totalOrderValue = Math.round((quantity * unitprice) * 100) / 100
     cy.get('[axes="TOT_VAL_ORD"] > div')
       .invoke('text')
       .should('contain', totalOrderValue)
@@ -199,7 +198,7 @@ describe('SIMS Finance Trial', () => {
     //Assertions for Summary page--
     cy.get('#tot_value_0')
       .invoke('text')
-      .should('contain',totalOrderValue)
+      .should('contain', totalOrderValue)
 
 
     cy.get('[for="supplier_0"]')
