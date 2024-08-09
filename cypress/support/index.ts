@@ -7,5 +7,7 @@ declare namespace Cypress{
         selectUsingSearchIcon(acronym:string,valueToSelect:string);
         selectCostCentre(costCentre:string);
         getModifiedTime(filePath:string);
+        fsWriteFile();
+        newestFileName(directory:string)
     }
 }

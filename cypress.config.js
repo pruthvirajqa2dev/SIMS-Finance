@@ -37,7 +37,7 @@ module.exports = defineConfig({
       on('task', {
         getCurrentTime() {
           return new Promise((resolve) => {
-            resolve(new Date().toLocaleString("en-US",{timeZone:"Asia/Kolkata"}))
+            resolve(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }))
           })
         }
       })
@@ -45,8 +45,35 @@ module.exports = defineConfig({
         getDifferenceBetCurrAndModTime(modDate) {
           return new Promise((resolve) => {
             resolve(
-              Math.abs(new Date().toLocaleString("en-US",{timeZone:"Asia/Kolkata"}) - modDate)/1000
+              Math.abs(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }) - modDate) / 1000
             )
+          })
+        }
+      })
+      on('task', {
+        fsWriteFile() {
+          return new Promise((resolve) => {
+            var fs = require("fs");
+            fs.writeFile("./Test Files/test" + Date.now() + ".txt", "SIMS Finance", function (err) {
+              if (err) {
+                resolve(null)
+              }
+            })
+            resolve("File created")
+          })
+        }
+      })
+      on('task', {
+        newestFileName(directory) {
+          return new Promise((resolve) => {
+            const fs = require('fs')
+            const glob = require('glob')
+
+            const newestFile = glob.sync(directory)
+              .map(name => ({ name, ctime: fs.statSync(name).ctime }))
+              .sort((a, b) => b.ctime - a.ctime)[0].name
+              console.log(newestFile)
+            resolve(newestFile)
           })
         }
       })
