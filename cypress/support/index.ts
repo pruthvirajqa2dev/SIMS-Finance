@@ -9,5 +9,6 @@ declare namespace Cypress{
         getModifiedTime(filePath:string);
         fsWriteFile();
         newestFileName(directory:string)
+        jobProcessingDialog();
     }
 }

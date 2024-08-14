@@ -29,15 +29,15 @@ describe('Scenario 30', () => {
     cy.get('.quick-lunch').eq(1)
       .find('#esr_launch_text')
       .clear({ force: true })
-      .type(testData.screen, { force: true })
+      .type(testData.PRL300Q, { force: true })
 
     //***Click on the menu item displayed
     cy.get('.ui-menu-item')
-      .contains(testData.screen)
+      .contains(testData.PRL300Q)
       .click()
 
+    //Select school      
     cy.selectUsingSearchIcon('company_id', testData.schoolId)
-    // cy.selectUsingSearchIcon('custmf_code','Customer Code',schoolId,'Green Abbey School')
 
     cy.log("************PRL300Q screen**************")
     cy.log("Click on search button")

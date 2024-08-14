@@ -80,5 +80,5 @@ module.exports = defineConfig({
     },
   },
   video: true,
-  videoCompression: true,
+  videoCompression: 10,
 });

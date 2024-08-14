@@ -46,11 +46,12 @@ Cypress.Commands.add('login', (username, password) => {
 Cypress.Commands.add('selectUsingSearchIcon', (acronym, valueToSelect) => {
   cy.get('#' + acronym + '_icon')
     .click()
-  cy.get('[axes="' + acronym.toUpperCase() + '"] > div')
+
+  cy.get('tbody').find('[axes="' + acronym.toUpperCase() + '"] > div')
     .contains(valueToSelect)
     .parent()
     .parent()
-    .contains('Select')
+    .find('#esr_action')
     .click()
 })
 Cypress.Commands.add('selectCostCentre', (costCentre) => {
@@ -69,3 +70,11 @@ Cypress.Commands.add('selectCostCentre', (costCentre) => {
     .contains('Select')
     .click()
 })
+Cypress.Commands.add('jobProcessingDialog', () => {
+   //Job processing dialog
+   cy.get('*[id^=ui-id]').contains('Job Processing').should('be.visible')
+   cy.get('#btn_ok').click()
+   //Background Processing
+   cy.get('*[id^=ui-id]').contains('Background Processing').should('be.visible')
+   cy.get('.faicon > i[style*="color:green"]',{timeout:60000}).should('be.visible')
+  })

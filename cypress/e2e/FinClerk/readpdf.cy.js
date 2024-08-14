@@ -28,16 +28,16 @@ describe('SIMS Finance Trial', () => {
     const username = 'FINCLERK01D130'
     const password = 'SIMSFinance2018#'
     const screen = 'RSS310Q'
-    const supplierName = 'British Telecom'
-    const supplierItemRefText = 'Test item reference'
-    const descText = "Test description"
-    const descText1 = "Test description 1"
-    const descText2 = "Test description 2"
-    const descText3 = "Test description 3"
-    const quantity = "3.00"
-    const unitprice = "120.00"
-    const costCentre = "Music Lessons"
-    const completedOrderText = "The following 1 Purchase Order(s) have been created."
+    // const supplierName = 'British Telecom'
+    // const supplierItemRefText = 'Test item reference'
+    // const descText = "Test description"
+    // const descText1 = "Test description 1"
+    // const descText2 = "Test description 2"
+    // const descText3 = "Test description 3"
+    // const quantity = "3.00"
+    // const unitprice = "120.00"
+    // const costCentre = "Music Lessons"
+    // const completedOrderText = "The following 1 Purchase Order(s) have been created."
 
     cy.login(username, password)
 
