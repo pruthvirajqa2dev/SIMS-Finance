@@ -1,5 +1,5 @@
 import testData from '../../fixtures/example.json'
-describe('SIMS Finance Trial', () => {
+describe('Postchecks TC 1 to 9', () => {
   beforeEach(() => {
     cy.visit('https://uat-v2.pecuniam-online.co.uk/auth/esr.elogin', {
       failOnStatusCode: false,
@@ -7,13 +7,6 @@ describe('SIMS Finance Trial', () => {
     )
   })
 
-  it.skip('Check if Up', () => {
-    const errorMsg = '502 - Web server received an invalid response while acting as a gateway or proxy server.'
-    cy.get('h2', { timeout: 0 })
-      .first()
-      .should('not.have.text', errorMsg)
-
-  })
   //Handling uncaught exceptions to avoid false errors
   Cypress.on('uncaught:exception', (err, runnable) => {
     // returning false here prevents Cypress from
@@ -74,8 +67,9 @@ describe('SIMS Finance Trial', () => {
   //Test case #3
   it('File upload using SPC420', () => {
     let fileCreationFlag = "Y"
+    let fileExt = '.txt'
     if (fileCreationFlag.includes("Y")) {
-      cy.task('fsWriteFile').then((data) => {
+      cy.task('fsWriteFile', fileExt).then((data) => {
         cy.wrap(data).as('writeFile')
         cy.get('@writeFile').should('eq', 'File created')
       })
@@ -110,8 +104,8 @@ describe('SIMS Finance Trial', () => {
       .contains(treeItem).click()
 
     cy.get('.multibutton_content')
-      .find('.esr_multibutton')
-      .contains('Upload File').click()
+      .find('.esr_multibutton:contains("Upload File")')
+      .eq(0).click()
 
     cy.get('.ui-dialog-titlebar').invoke('text').should('contain', 'Upload File')
 
@@ -304,18 +298,19 @@ describe('SIMS Finance Trial', () => {
     cy.get('#p_period').select(period[1])
     cy.window().then((win) => {
       const orig = win.open
-    
+
       win.open = function (url, target, features) {
         return orig.call(this, url, '_self', features)
       }
     })
     cy.get('#execute_in_eseries').click()
 
-    cy.get('.TITLE_XQ').invoke('text').should('contain',schoolId)
-    .should('contain',period[0]).should('contain',period[1])
-   
+    cy.get('.TITLE_XQ').invoke('text').should('contain', schoolId)
+      .should('contain', period[0]).should('contain', period[1])
+
   })
-  it.only('SIMS_TB_SCHOOL - XQuery Report - Submit', () => {
+  //Test case #7
+  it('SIMS_TB_SCHOOL - XQuery Report - Submit', () => {
     const username = testData.username
     const password = testData.password
     const screen = testData.SIMS_TB_SCHOOL
@@ -354,10 +349,148 @@ describe('SIMS Finance Trial', () => {
 
     cy.get('#p_ye_ar').select(period[0])
     cy.get('#p_period').select(period[1])
-    
+
     cy.get('#distribute_via_workflow').click()
     cy.get('*[id^=ui-id]').contains('SIMS_TB_SCHOOL - SIMS Trial Balance School').should('be.visible')
-    
+    //Check email content to be sent
     cy.get('#email_address').type(emailId)
+
+    cy.get('#subject').invoke('val')
+      .should('contain', period[0])
+      .should('contain', period[1])
+      .should('contain', schoolId)
+
+    cy.get('#time').invoke('val')
+      .should('contain', new Date().toLocaleDateString('en-GB'))
+
+    cy.get('#ok_button').click()
+
+    // insert code to check if the mail is received on the specified mail address
+  })
+  //Test case #8
+  it('RSS310Q - Attachments', () => {
+
+    let fileCreationFlag = "Y"
+    let fileExt = '.docx'
+    if (fileCreationFlag.includes("Y")) {
+      cy.task('fsWriteFile', fileExt).then((data) => {
+        cy.wrap(data).as('writeFile')
+        cy.get('@writeFile').should('eq', 'File created')
+      })
+    }
+    const username = testData.username
+    const password = testData.password
+    const screen = testData.RSS310Q
+    const schoolId = testData.schoolId
+
+    cy.login(username, password)
+
+    //Click Hamburger
+    cy.log("Click on Hamburger")
+    cy.get('#banner_navigation_navigate')
+      .should('be.visible').click()
+
+
+    //Click on the text box in Quick launch
+    cy.log("Type screen in the text box")
+    cy.get('.quick-lunch').eq(1)
+      .find('#esr_launch_text').clear().type(`${screen}`)
+
+    //Click on the menu item displayed
+    cy.log("Click on the menu item displayed")
+    cy.get('.ui-menu-item')
+      .contains(screen).click()
+    cy.selectUsingSearchIcon('company_id', schoolId)
+    cy.log("************RSS310Q screen**************")
+    cy.log("Click on search button")
+
+    cy.get('body')
+      .then(($body) => {
+        if ($body.find('h1[id*=defaultCompanyEntry]').length) {
+          cy.get('button[data-alias="SAVE"]').click().then(() => {
+            return 'h1[id*=defaultCompanyEntry]';
+          })
+        }
+
+      })
+
+    cy.get('#search_button')
+      .click()
+    const minCeiled = Math.ceil(0);
+    const maxFloored = Math.floor(10);
+    const random = Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled)
+    cy.log("Selecting random record #" + random)
+    cy.get('.multibutton_content')
+      .find('.esr_multibutton:contains("View")')
+      .eq(random)
+      .click()
+
+    cy.get('div[id*=esr_breadcrumb]').should('have.length', 3).invoke('text')
+      .should('contain', 'Search Criteria')
+      .should('contain', 'Header Results')
+      .should('contain', 'Header Details')
+
+    cy.get('#esr_attachment_manager').click()
+    cy.get('*[id^=ui-id]').contains('Attachments').should('be.visible')
+    cy.get('.multibutton_content').contains('Add File').click()
+
+    cy.task('newestFileName', 'Test Files/*' + fileExt).then((data) => {
+      cy.wrap(data).as('filename')
+      cy.get('@filename').then((data) => {
+        cy.log(data)
+        cy.get('.dhx-dropable-area').selectFile(data, { action: 'drag-drop' })
+        const splitFileName = data.split("/")
+        let fileName = splitFileName[1]
+        cy.wrap(fileName).as('onlyFileNameWithExt')
+        cy.get('.dhx_list-item--name').invoke('text').should('contain', fileName)
+      })
+    })
+    cy.get('*[class^=dhx_item--success-mark]').should('be.visible')
+    cy.get('#ok').click()
+
+    cy.get('*[id^=ui-id]').contains('Attachment Details').should('be.visible')
+    cy.get('@onlyFileNameWithExt').then((data) => {
+      const splitFileName = data.split(".")
+      let file = splitFileName[0]
+      let ext = splitFileName[1]
+      cy.wrap(file).as('fileNameWithoutExt')
+      cy.wrap(ext).as('fileExt')
+      cy.get('#file_title').invoke('val').should('contain', file)
+      cy.get('#filename').invoke('text').should('contain', file + '.' + ext)
+    })
+    cy.get('#esr_attach_button').click()
+
+    cy.get('@fileNameWithoutExt').then((data) => {
+      cy.get('[axes="DOCUMENT_TITLE"]').contains(data).should('be.visible')
+      cy.get('@fileExt').then((extData) => {
+        cy.get('[data-internal-ref] > [axes="DOCUMENT_TITLE"]').contains(data).eq(0).parent()
+          .siblings('[axes="FILE_EXT"]').invoke('text')
+          .should('contain', extData)
+
+      })
+      cy.get('[axes="DOCUMENT_TITLE"]').contains(data).eq(0).parent()
+        .siblings('[axes="SAVED_DATE"]').invoke('text')
+        .should('contain', new Date().toLocaleDateString('en-GB'))
+    })
+    cy.get('#esr_close_button').click()
+
+  })
+  //Test case #9
+  it.only('Help Screen', () => {
+    const username = testData.username
+    const password = testData.password
+    cy.login(username, password)
+    cy.window().then((win) => {
+      const orig = win.open
+
+      win.open = function (url, target, features) {
+        return orig.call(this, url, '_self', features)
+      }
+    })
+    cy.get('[aria-label=Help]').should('be.visible').click()
+    cy.url().then((url) => {
+      cy.log('Current URL is: ' + url)
+    })
+    cy.url().should('eq',"https://uat-v2.pecuniam-online.co.uk/"+testData.tenant+"/help/int/webhelp/int.htm")
   })
 })

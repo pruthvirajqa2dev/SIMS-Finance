@@ -51,10 +51,10 @@ module.exports = defineConfig({
         }
       })
       on('task', {
-        fsWriteFile() {
+        fsWriteFile(ext) {
           return new Promise((resolve) => {
             var fs = require("fs");
-            fs.writeFile("./Test Files/test" + Date.now() + ".txt", "SIMS Finance", function (err) {
+            fs.writeFile("./Test Files/test" + Date.now() + ext, "SIMS Finance", function (err) {
               if (err) {
                 resolve(null)
               }

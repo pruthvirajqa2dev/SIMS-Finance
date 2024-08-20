@@ -85,8 +85,8 @@ describe('SIMS Finance Trial', () => {
     //New Button
     cy.log("Click in new button(with dropdown)")
     cy.get('.multibutton_content')
-      .find('.esr_multibutton')
-      .contains('New')
+      .find('.esr_multibutton:contains("New")')
+      .eq(0)
       .click()
 
 

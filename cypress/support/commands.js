@@ -78,3 +78,17 @@ Cypress.Commands.add('jobProcessingDialog', () => {
    cy.get('*[id^=ui-id]').contains('Background Processing').should('be.visible')
    cy.get('.faicon > i[style*="color:green"]',{timeout:60000}).should('be.visible')
   })
+
+  Cypress.Commands.add('selectFirstLedgerCodeAndFundCode', () => {
+    cy.get('#e1_part_code_lookup')
+      .click()
+    cy.get('[aria-describedby$="glcodepartlookup_container"]')
+      .find('.multibutton_content')
+      .find('.esr_hover:contains("Select")').eq(0).click()
+      
+    cy.get('#e2_part_code_lookup')
+    .click()
+    cy.get('[aria-describedby$="glcodepartlookup_container"]')
+      .find('.multibutton_content')
+      .find('.esr_hover:contains("Select")').eq(0).click()
+  })
