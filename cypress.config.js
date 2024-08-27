@@ -81,28 +81,11 @@ module.exports = defineConfig({
       on('task', {
         unzipFile(directory) {
           return new Promise((resolve) => {
-            const fs = require('fs')
-            fs.readdirSync('./cypress/downloads', (err, files) => {
-              if (err) {
-                console.log(err);
-              }
-            
-                const extensions = ['.pdf'];
-            
-              files.forEach((file) => {
-                const fileDir = path.join('./cypress/downloads', file);
-                    // Get the extension name of the file, lowercase it, then see if it is in the array of extensions
-                    // defined above. If so, remove it.
-                if (extensions.includes(path.extname(file).toLowerCase())) {
-                  console.log('Deleting file'+fileDir)
-                  fs.unlinkSync(fileDir);
-                }
-              });
-            });
+            console.log('Into unzip file')
+            console.log('directory:'+directory)
             const decompress = require("decompress");
-            decompress(directory, "./cypress/downloads/unzip")
+            decompress(directory, "./cypress/downloads/unzip"+Date.now().toString())
               .then((files) => {
-                console.log(files);
                 resolve(files)
               })
               .catch((error) => {

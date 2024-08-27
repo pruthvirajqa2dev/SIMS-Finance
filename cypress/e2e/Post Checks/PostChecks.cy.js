@@ -5,17 +5,6 @@ describe('Postchecks TC 1 to 9', () => {
       failOnStatusCode: false,
     }
     )
-    cy.intercept(/.*\.pdf$/, (req) => {
-      const pdfName = req.url.split("/").at(-1);
-      cy.log("Downloading pdf instead of opening in browser", {
-        url: req.url,
-        pdfName,
-      });
-
-      req.continue((res) => {
-        res.headers["Content-Disposition"] = `attachment; filename=${pdfName};`;
-      });
-    })
   })
 
   //Handling uncaught exceptions to avoid false errors
@@ -233,19 +222,22 @@ describe('Postchecks TC 1 to 9', () => {
     cy.get('#save_all').click()
     const fileExt = '.zip'
     cy.task('newestFileName', './cypress/downloads/*' + fileExt).then((data) => {
-      cy.log("Newest zip file:"+data)
-      cy.task('unzipFile', data).then((zipdata) => {
-        cy.log(zipdata)
-    })
-    cy.task('newestFileName', './cypress/downloads/unzip/*').then((fileName) => {
-      cy.log ("Newest unzipped PDF:"+fileName)
-      cy.task('readPdf', fileName).then(function (data) {
-        cy.log("Text: " + data.text)
-        cy.log("Info: " + data.info)
-      })
+      cy.log("Newest zip file:" + data)
+      cy.task('unzipFile', data)
+      cy.task('newestFileName', './cypress/downloads/unzip*/*').then((fileName) => {
+        cy.log("Newest unzipped PDF:" + fileName)
+        cy.task('readPdf', fileName).then(function (data) {
+          cy.log("Text: " + data.text)
+          cy.wrap(data.text).as('PDFdata')
+          cy.get('@PDFdata')
+            .should('contain', schoolId)
+            .should('contain', testData.schoolName)
+            .should('contain', username)
+            .should('contain', 'Sorted By:\nS')
+        })
 
+      })
     })
-  })
   })
 
 
