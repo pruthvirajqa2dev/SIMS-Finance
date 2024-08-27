@@ -3,7 +3,7 @@ describe('SIMS Finance Trial', () => {
     cy.visit('https://uat-v2.pecuniam-online.co.uk/auth/esr.elogin', { failOnStatusCode: false })
   })
 
-  it('Check if Up', () => {
+  it.only('Check if Up', () => {
 
 
     const errorMsg = '502 - Web server received an invalid response while acting as a gateway or proxy server.'

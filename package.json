@@ -13,6 +13,9 @@
   },
   "dependencies": {
     "cypress-real-events": "^1.13.0",
+    "decompress": "^4.2.1",
+    "jszip": "^3.10.1",
+    "jszip-unzip": "^3.4.0-0",
     "pdf-parse": "^1.1.1"
   }
 }

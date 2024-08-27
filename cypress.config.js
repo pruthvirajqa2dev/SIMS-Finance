@@ -4,6 +4,7 @@ const pdf = require('pdf-parse');
 const path = require('path');
 
 module.exports = defineConfig({
+
   viewportWidth: 1920,
   viewportHeight: 1080,
   reporter: 'cypress-mochawesome-reporter',
@@ -72,8 +73,41 @@ module.exports = defineConfig({
             const newestFile = glob.sync(directory)
               .map(name => ({ name, ctime: fs.statSync(name).ctime }))
               .sort((a, b) => b.ctime - a.ctime)[0].name
-              console.log(newestFile)
+            console.log(newestFile)
             resolve(newestFile)
+          })
+        }
+      })
+      on('task', {
+        unzipFile(directory) {
+          return new Promise((resolve) => {
+            const fs = require('fs')
+            fs.readdirSync('./cypress/downloads', (err, files) => {
+              if (err) {
+                console.log(err);
+              }
+            
+                const extensions = ['.pdf'];
+            
+              files.forEach((file) => {
+                const fileDir = path.join('./cypress/downloads', file);
+                    // Get the extension name of the file, lowercase it, then see if it is in the array of extensions
+                    // defined above. If so, remove it.
+                if (extensions.includes(path.extname(file).toLowerCase())) {
+                  console.log('Deleting file'+fileDir)
+                  fs.unlinkSync(fileDir);
+                }
+              });
+            });
+            const decompress = require("decompress");
+            decompress(directory, "./cypress/downloads/unzip")
+              .then((files) => {
+                console.log(files);
+                resolve(files)
+              })
+              .catch((error) => {
+                console.log(error);
+              });
           })
         }
       })

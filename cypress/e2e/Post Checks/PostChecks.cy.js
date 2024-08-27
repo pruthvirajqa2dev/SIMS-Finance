@@ -5,14 +5,25 @@ describe('Postchecks TC 1 to 9', () => {
       failOnStatusCode: false,
     }
     )
+    cy.intercept(/.*\.pdf$/, (req) => {
+      const pdfName = req.url.split("/").at(-1);
+      cy.log("Downloading pdf instead of opening in browser", {
+        url: req.url,
+        pdfName,
+      });
+
+      req.continue((res) => {
+        res.headers["Content-Disposition"] = `attachment; filename=${pdfName};`;
+      });
+    })
   })
 
   //Handling uncaught exceptions to avoid false errors
-  Cypress.on('uncaught:exception', (err, runnable) => {
-    // returning false here prevents Cypress from
-    // failing the test
-    return false
-  })
+  // Cypress.on('uncaught:exception', (err, runnable) => {
+  //   // returning false here prevents Cypress from
+  //   // failing the test
+  //   return false
+  // })
 
   //Test case #1
   it('Login', () => {
@@ -170,11 +181,11 @@ describe('Postchecks TC 1 to 9', () => {
   })
 
   //Test case #4
-  it('RSS570 - Crystal Report', () => {
+  it.only('RSS570 - Crystal Report', () => {
     const username = testData.username
     const password = testData.password
     const screen = testData.RSS570
-    const schoolId = testData.multiSiteUserSchoolId
+    const schoolId = testData.schoolId
     const supplierOrNominalSort = testData.supplierOrNominalSort
     cy.login(username, password)
 
@@ -199,7 +210,7 @@ describe('Postchecks TC 1 to 9', () => {
     //#1
     cy.get('input[aria-label=School]').invoke('val').should('contain', schoolId)
     //#2
-    cy.get('#supplier_or_normal').clear().type(supplierOrNominalSort)
+    cy.get('#supplier_or_normal').type(supplierOrNominalSort, { force: true })
     //#3
     cy.get('#currency_control_0').check().should('be.checked')
 
@@ -209,8 +220,32 @@ describe('Postchecks TC 1 to 9', () => {
     cy.get('#spc_rep_0').invoke('text').should('contain', 'RSS570')
       .should('contain', '.PDF')
       .should('contain', 'Outstanding Accruals')
+    cy.window().then((win) => {
+      const orig = win.open
 
-    cy.get('#btn_close').click()
+      win.open = function (url, target, features) {
+        return orig.call(this, url, '_self', features)
+      }
+    })
+    cy.intercept("POST", "/sfdemosite130**").as("PDFCLick")
+
+    // cy.get('#spc_rep_0').click()//.invoke('text').should('contain', 'Outstanding Accruals')
+    cy.get('#save_all').click()
+    const fileExt = '.zip'
+    cy.task('newestFileName', './cypress/downloads/*' + fileExt).then((data) => {
+      cy.log("Newest zip file:"+data)
+      cy.task('unzipFile', data).then((zipdata) => {
+        cy.log(zipdata)
+    })
+    cy.task('newestFileName', './cypress/downloads/unzip/*').then((fileName) => {
+      cy.log ("Newest unzipped PDF:"+fileName)
+      cy.task('readPdf', fileName).then(function (data) {
+        cy.log("Text: " + data.text)
+        cy.log("Info: " + data.info)
+      })
+
+    })
+  })
   })
 
 
@@ -476,7 +511,7 @@ describe('Postchecks TC 1 to 9', () => {
 
   })
   //Test case #9
-  it.only('Help Screen', () => {
+  it('Help Screen', () => {
     const username = testData.username
     const password = testData.password
     cy.login(username, password)
@@ -491,6 +526,6 @@ describe('Postchecks TC 1 to 9', () => {
     cy.url().then((url) => {
       cy.log('Current URL is: ' + url)
     })
-    cy.url().should('eq',"https://uat-v2.pecuniam-online.co.uk/"+testData.tenant+"/help/int/webhelp/int.htm")
+    cy.url().should('eq', "https://uat-v2.pecuniam-online.co.uk/" + testData.tenant + "/help/int/webhelp/int.htm")
   })
 })
