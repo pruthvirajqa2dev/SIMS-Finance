@@ -18,7 +18,7 @@ describe('Postchecks TC 1 to 9', () => {
   //Test case #1
   it('Login', () => {
     const username = testData.username
-    const screenshotFolder = 'Postchecks/Login/'
+    const screenshotFolder = 'Postchecks/Run'+new Date().toLocaleDateString('en-GB').replaceAll('/','')+'/Login/'
     let textUsername = ''
     if (username.includes('FINCLERK')) {
       textUsername = 'Finance Clerk'
@@ -36,7 +36,7 @@ describe('Postchecks TC 1 to 9', () => {
   //Test case #2
   it('Logout', () => {
     const username = testData.username
-    const screenshotFolder = 'Postchecks/Logout/'
+    const screenshotFolder = 'Postchecks/Run'+new Date().toLocaleDateString('en-GB').replaceAll('/','')+'/Logout/'
 
     let textUsername = ''
     if (username.includes('FINCLERK')) {
@@ -51,7 +51,7 @@ describe('Postchecks TC 1 to 9', () => {
       .should('be.visible')
       .click()
     let i = 2
-
+    cy.screenshot(screenshotFolder + (++i))
     cy.get('*[id*=esr_user_profile]')
       .find('*[aria-label="Click to Logout"]')
       .click()
@@ -70,7 +70,7 @@ describe('Postchecks TC 1 to 9', () => {
 
   //Test case #3
   it('File upload using SPC420', () => {
-    const screenshotFolder = 'Postchecks/SPC420 - File Upload/'
+    const screenshotFolder = 'Postchecks/Run'+new Date().toLocaleDateString('en-GB').replaceAll('/','')+'/SPC420 - File Upload/'
     let fileCreationFlag = "Y"
     let fileExt = '.txt'
     if (fileCreationFlag.includes("Y")) {
@@ -201,7 +201,7 @@ describe('Postchecks TC 1 to 9', () => {
 
   //Test case #4
   it('RSS570 - Crystal Report', () => {
-    const screenshotFolder = 'Postchecks/RSS570 - Crystal Report/'
+    const screenshotFolder = 'Postchecks/Run'+new Date().toLocaleDateString('en-GB').replaceAll('/','')+'/RSS570 - Crystal Report/'
     const username = testData.username
     const password = testData.password
     const screen = testData.RSS570
@@ -282,7 +282,7 @@ describe('Postchecks TC 1 to 9', () => {
 
   //Test case #5
   it('NML510 - Trial Balance Report', () => {
-    const screenshotFolder = 'Postchecks/NML510 - Trial Balance Report/'
+    const screenshotFolder = 'Postchecks/Run'+new Date().toLocaleDateString('en-GB').replaceAll('/','')+'/NML510 - Trial Balance Report/'
     const username = testData.username
     const password = testData.password
     const screen = testData.NML510
@@ -357,7 +357,7 @@ describe('Postchecks TC 1 to 9', () => {
 
   //Test case #6
   it('SIMS_TB_SCHOOL - XQuery Report - Execute', () => {
-    const screenshotFolder = 'Postchecks/SIMS_TB_SCHOOL - XQuery Report - Execute/'
+    const screenshotFolder = 'Postchecks/Run'+new Date().toLocaleDateString('en-GB').replaceAll('/','')+'/SIMS_TB_SCHOOL - XQuery Report - Execute/'
     const username = testData.username
     const password = testData.password
     const screen = testData.SIMS_TB_SCHOOL
@@ -432,7 +432,7 @@ describe('Postchecks TC 1 to 9', () => {
 
   //Test case #7
   it('SIMS_TB_SCHOOL - XQuery Report - Submit', () => {
-    const screenshotFolder = 'Postchecks/SIMS_TB_SCHOOL - XQuery Report - Submit/'
+    const screenshotFolder = 'Postchecks/Run'+new Date().toLocaleDateString('en-GB').replaceAll('/','')+'/SIMS_TB_SCHOOL - XQuery Report - Submit/'
     const username = testData.username
     const password = testData.password
     const screen = testData.SIMS_TB_SCHOOL
@@ -504,7 +504,7 @@ describe('Postchecks TC 1 to 9', () => {
 
   //Test case #8
   it('RSS310Q - Attachments', () => {
-    const screenshotFolder = 'Postchecks/RSS310Q - Attachments/'
+    const screenshotFolder = 'Postchecks/Run'+new Date().toLocaleDateString('en-GB').replaceAll('/','')+'/RSS310Q - Attachments/'
     let fileCreationFlag = "Y"
     let fileExt = '.docx'
     if (fileCreationFlag.includes("Y")) {
@@ -560,9 +560,7 @@ describe('Postchecks TC 1 to 9', () => {
       .click()
     cy.screenshot(screenshotFolder + (++i))
 
-    const minCeiled = Math.ceil(0);
-    const maxFloored = Math.floor(10);
-    const random = Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled)
+    const random = Math.floor(Math.random() * (Math.floor(10) - Math.ceil(1) + 1) + Math.ceil(1))
     cy.log("Selecting random record #" + random)
     cy.get('.multibutton_content')
       .find('.esr_multibutton:contains("View")')
@@ -630,12 +628,11 @@ describe('Postchecks TC 1 to 9', () => {
     })
     cy.screenshot(screenshotFolder + (++i))
     cy.get('#esr_close_button').click()
-    cy.screenshot(screenshotFolder + (++i))
   })
 
   //Test case #9
   it('Help Screen', () => {
-    const screenshotFolder = 'Postchecks/Help Screen/'
+    const screenshotFolder = 'Postchecks/Run'+new Date().toLocaleDateString('en-GB').replaceAll('/','')+'/Help Screen/'
     const username = testData.username
     const password = testData.password
     cy.login(username, password, screenshotFolder)

@@ -3,6 +3,7 @@
 **/cypress/results
 **/cypress/reports/html
 **/cypress/screenshots
+**/cypress/downloads
 **/cypress/videos
 **/.git
 **/*.txt
