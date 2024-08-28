@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 describe('Scenario 30', () => {
     beforeEach(() => {
         cy.visit('https://uat-v2.pecuniam-online.co.uk/auth/esr.elogin', { failOnStatusCode: false })
@@ -5,6 +6,7 @@ describe('Scenario 30', () => {
 
 
     it('Multi line Invoice entry - SLS310 as a Finance Director for a school', () => {
+        const screenshotFolder = 'Multi line Invoice entry - SLS310'
         const username = 'T102FINDIR01'
         const password = 'T2LETmeSKI2#'
         const screen = 'SLS310'
@@ -27,15 +29,11 @@ describe('Scenario 30', () => {
         let unitPriceMax = 59.8812;
 
         let randomUnitPrice = Math.random() * (unitPriceMax - unitPriceMin) + unitPriceMax;
-        var result = (randomUnitPrice - Math.floor(randomUnitPrice)) !== 0; 
-        while(!result){
+        var resultUnitPrice = (randomUnitPrice - Math.floor(randomUnitPrice)) !== 0; 
+        while(!resultUnitPrice){
             randomUnitPrice =Math.random() * (unitPriceMax - unitPriceMin) + unitPriceMax;
         }
-        //console.log(randomNum);
-
-
-
-        cy.login(username, password)
+        cy.login(username, password,screenshotFolder)
 
         //***Click Hamburger
         cy.get('#banner_navigation_navigate')

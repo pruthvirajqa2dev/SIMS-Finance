@@ -17,9 +17,8 @@ describe('Scenario 30', () => {
   })
   it.only('Multi line Invoice entry - PRL300Q as a Finance Director for default school', () => {
 
-
     const screen = testData.PRL300Q
-    cy.login(testData.username, testData.password)
+    cy.login(testData.username, testData.password, screen)
     let costCentreArr = ["ESFA Grants", "Pupil Premium", "NCTL Grants", "LA Grants", "Catering",
       "Lettings", "Music Lessons", "Services of Staff", "Donations", "Capital Funding"]
     const costCentre = costCentreArr[Math.floor(Math.random() * costCentreArr.length)]
@@ -56,7 +55,7 @@ describe('Scenario 30', () => {
     const vatAmount = Math.round((netInvoice * vatPercent / 100) * 100) / 100
     cy.log("VAT Amount: " + vatAmount)
 
-    const totalInvoiceValue = Math.round((netInvoice + vatAmount )* 100) / 100
+    const totalInvoiceValue = Math.round((netInvoice + vatAmount) * 100) / 100
     cy.log("Total Invoice: " + totalInvoiceValue)
     //############Invoice calculation END #################################
 
@@ -169,24 +168,24 @@ describe('Scenario 30', () => {
       .click()
 
     cy.get('*[id^=ui-id]').contains("Invoice/Credit Note").click()
-    cy.get('#vat_value').invoke('val').should('eq', vatAmount!=0?vatAmount.toFixed(2).toLocaleString():"0.00")
-    cy.get('#total_line_value').invoke('val').should('eq',totalInvoiceValue.toFixed(2).toString())
+    cy.get('#vat_value').invoke('val').should('eq', vatAmount != 0 ? vatAmount.toFixed(2).toLocaleString() : "0.00")
+    cy.get('#total_line_value').invoke('val').should('eq', totalInvoiceValue.toFixed(2).toString())
 
     cy.get('[data-originalvalue="Save"]').click()
     //Assert
-    cy.get('[axes="LINE_QUANTITY"] > div').invoke('text').should('contain',quantity)
-    cy.get('[axes="UNIT_PRICE"] > div').invoke('text').should('contain',unitprice)
-    cy.get('[axes="VAT_EXCLUSIVE"] > div').invoke('text').should('contain',String(netInvoice.toLocaleString()))
-    cy.get('[axes="VAT_CODE"] > div').invoke('text').should('contain',vatCode)
-    cy.get('[axes="VAT_VALUE"]').invoke('text').should('contain',String(vatAmount.toFixed(2)))
+    cy.get('[axes="LINE_QUANTITY"] > div').invoke('text').should('contain', quantity)
+    cy.get('[axes="UNIT_PRICE"] > div').invoke('text').should('contain', unitprice)
+    cy.get('[axes="VAT_EXCLUSIVE"] > div').invoke('text').should('contain', String(netInvoice.toLocaleString()))
+    cy.get('[axes="VAT_CODE"] > div').invoke('text').should('contain', vatCode)
+    cy.get('[axes="VAT_VALUE"]').invoke('text').should('contain', String(vatAmount.toFixed(2)))
 
     cy.get('[data-originalvalue="Finish & Save"]').click()
-    
+
     cy.get('*[id*=summary_details]').should('be.visible')
     //Assert
-    cy.get('#tot_value').invoke('text').should('eq',String(totalInvoiceValue.toLocaleString()))
-    cy.get('#tot_vat').invoke('text').should('contain',String(vatAmount.toLocaleString()))
-    cy.get('#company_id').invoke('text').should('eq',testData.schoolId)
+    cy.get('#tot_value').invoke('text').should('eq', String(totalInvoiceValue.toLocaleString()))
+    cy.get('#tot_vat').invoke('text').should('contain', String(vatAmount.toLocaleString()))
+    cy.get('#company_id').invoke('text').should('eq', testData.schoolId)
     cy.get('#ok_button').click()
   })
 })

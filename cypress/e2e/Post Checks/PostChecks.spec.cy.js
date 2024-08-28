@@ -7,10 +7,11 @@ describe('Postchecks TC 1 to 9', () => {
     )
   })
 
-  // Handling uncaught exceptions to avoid false errors
-  Cypress.on('uncaught:exception', (err, runnable) => {
+  //Handling uncaught exceptions to avoid false errors
+  Cypress.on('uncaught:exception', (err) => {
     // returning false here prevents Cypress from
     // failing the test
+    console.log(err)
     return false
   })
 
@@ -59,23 +60,17 @@ describe('Postchecks TC 1 to 9', () => {
       .should('be.visible')
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
-
-
     cy.get('#esr_messagebox_yes')
       .click()
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
-
-
     cy.get('#login')
       .should('be.visible')
-
   })
 
   //Test case #3
   it('File upload using SPC420', () => {
     const screenshotFolder = 'Postchecks/SPC420 - File Upload/'
-
     let fileCreationFlag = "Y"
     let fileExt = '.txt'
     if (fileCreationFlag.includes("Y")) {
@@ -97,14 +92,11 @@ describe('Postchecks TC 1 to 9', () => {
       .should('be.visible').click()
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
-
     //Click on the text box in Quick launch
     cy.log("Type screen in the text box")
     cy.get('.quick-lunch').eq(1)
       .find('#esr_launch_text').clear().type(`${screen}`)
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
-
-
 
     //Click on the menu item displayed
     cy.log("Click on the menu item displayed")
@@ -112,17 +104,14 @@ describe('Postchecks TC 1 to 9', () => {
       .contains(screen).click()
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
-
     cy.get('.esr_banner_environment > .title').should('contain', 'SPC420 - File Manager')
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
-
 
     cy.get('*[id$=main_SERVER_DIR_TREE]')
       .should('be.visible')
       .find('*[class^=esr_tree_selectable]')
       .contains(treeItem).click()
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
-
 
     cy.get('.multibutton_content')
       .find('.esr_multibutton:contains("Upload File")')
@@ -135,7 +124,6 @@ describe('Postchecks TC 1 to 9', () => {
     cy.get('#upload_button').click()
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
-
     cy.task('newestFileName', 'Test Files/*txt').then((data) => {
       cy.wrap(data).as('filename')
       cy.get('@filename').then((data) => {
@@ -147,17 +135,14 @@ describe('Postchecks TC 1 to 9', () => {
         cy.get('.dhx_list-item--name').invoke('text').should('contain', fileName)
       })
     })
+
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
-
-
 
     cy.get('*[class^=dhx_item--success-mark]').should('be.visible')
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
-
     cy.get('#ok').click()
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
-
 
     cy.get('@onlyFileNameWithExt').then((data) => {
       const splitFileName = data.split(".")
@@ -170,12 +155,10 @@ describe('Postchecks TC 1 to 9', () => {
     })
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
-
     //Select school id
     cy.get('#company_id_icon')
       .click()
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
-
 
     cy.wait(2000)
     cy.get('*[id^=ui-id]').contains('School ID').should('be.visible')
@@ -187,10 +170,8 @@ describe('Postchecks TC 1 to 9', () => {
       .click()
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
-
     cy.get('#update_button').click()
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
-
 
     //Record assertions
     cy.get('[axes="COMPANY_ID"] > div').eq(0).invoke('text').should('eq', testData.schoolId)
@@ -207,20 +188,15 @@ describe('Postchecks TC 1 to 9', () => {
       .click()
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
-
     cy.get('.ui-menu-item')
       .contains('Delete').click()
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
-
     cy.get('*[id^=ui-id]').contains('Delete File').should('be.visible')
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
-
     cy.get('#esr_messagebox_yes').click()
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
-
-
   })
 
   //Test case #4
@@ -240,14 +216,11 @@ describe('Postchecks TC 1 to 9', () => {
       .should('be.visible').click()
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
-
     //Click on the text box in Quick launch
     cy.log("Type screen in the text box")
     cy.get('.quick-lunch').eq(1)
       .find('#esr_launch_text').clear().type(`${screen}`)
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
-
-
 
     //Click on the menu item displayed
     cy.log("Click on the menu item displayed")
@@ -255,12 +228,9 @@ describe('Postchecks TC 1 to 9', () => {
       .contains(screen).click()
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
-
-
     //Complete the form for Outstanding Accruals
     cy.selectUsingSearchIcon('company_id', schoolId)
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
-
 
     //#1
     cy.get('input[aria-label=School]').invoke('val').should('contain', schoolId)
@@ -270,20 +240,16 @@ describe('Postchecks TC 1 to 9', () => {
     cy.get('#currency_control_0').check().should('be.checked')
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
-
     cy.get('#submit').click()
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
-
     cy.jobProcessingDialog()
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
-
 
     cy.get('#spc_rep_0').invoke('text').should('contain', 'RSS570')
       .should('contain', '.PDF')
       .should('contain', 'Outstanding Accruals')
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
-
 
     cy.window().then((win) => {
       const orig = win.open
@@ -294,7 +260,6 @@ describe('Postchecks TC 1 to 9', () => {
 
     cy.get('#save_all').click()
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
-
 
     const fileExt = '.zip'
     cy.task('newestFileName', './cypress/downloads/*' + fileExt).then((data) => {
@@ -315,7 +280,6 @@ describe('Postchecks TC 1 to 9', () => {
     })
   })
 
-
   //Test case #5
   it('NML510 - Trial Balance Report', () => {
     const screenshotFolder = 'Postchecks/NML510 - Trial Balance Report/'
@@ -333,14 +297,11 @@ describe('Postchecks TC 1 to 9', () => {
       .should('be.visible').click()
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
-
     //Click on the text box in Quick launch
     cy.log("Type screen in the text box")
     cy.get('.quick-lunch').eq(1)
       .find('#esr_launch_text').clear().type(`${screen}`)
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
-
-
 
     //Click on the menu item displayed
     cy.log("Click on the menu item displayed")
@@ -390,7 +351,6 @@ describe('Postchecks TC 1 to 9', () => {
         })
       })
     })
-
     cy.get('#btn_close').click()
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
   })
@@ -413,13 +373,11 @@ describe('Postchecks TC 1 to 9', () => {
       .should('be.visible').click()
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
-
     //Click on the text box in Quick launch
     cy.log("Type screen in the text box")
     cy.get('.quick-lunch').eq(1)
       .find('#esr_launch_text').clear().type(`${screen}`)
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
-
 
     //Click on the menu item displayed
     cy.log("Click on the menu item displayed")
@@ -427,12 +385,10 @@ describe('Postchecks TC 1 to 9', () => {
       .contains(screen).click()
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
-
     //Complete form
     cy.get('#p_comp_icon')
       .click()
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
-
 
     cy.get('tbody').find('[axes="COMPANY_ID"] > div')
       .contains(schoolId)
@@ -442,9 +398,7 @@ describe('Postchecks TC 1 to 9', () => {
       .click()
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
-
     cy.get('#p_ye_ar').select(period[0])
-
     cy.get('#p_period').select(period[1])
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
@@ -474,8 +428,8 @@ describe('Postchecks TC 1 to 9', () => {
       .siblings(':nth-child(5)').invoke('text')
       .should('contains', amt1.toLocaleString())
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
-
   })
+
   //Test case #7
   it('SIMS_TB_SCHOOL - XQuery Report - Submit', () => {
     const screenshotFolder = 'Postchecks/SIMS_TB_SCHOOL - XQuery Report - Submit/'
@@ -547,10 +501,10 @@ describe('Postchecks TC 1 to 9', () => {
 
     // insert code to check if the mail is received on the specified mail address
   })
+
   //Test case #8
   it('RSS310Q - Attachments', () => {
     const screenshotFolder = 'Postchecks/RSS310Q - Attachments/'
-
     let fileCreationFlag = "Y"
     let fileExt = '.docx'
     if (fileCreationFlag.includes("Y")) {
@@ -678,6 +632,7 @@ describe('Postchecks TC 1 to 9', () => {
     cy.get('#esr_close_button').click()
     cy.screenshot(screenshotFolder + (++i), { padding: 10 })
   })
+
   //Test case #9
   it('Help Screen', () => {
     const screenshotFolder = 'Postchecks/Help Screen/'

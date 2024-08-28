@@ -4,7 +4,6 @@ describe('Scenario 30', () => {
     cy.visit('https://uat-v2.pecuniam-online.co.uk/auth/esr.elogin', { failOnStatusCode: false })
   })
 
-
   it('Multi line Invoice entry - SLS310 as a Finance Director for default school', () => {
     const username = 'FINDIR99D102'
     const password = 'SIMSFinance2018#'
@@ -22,7 +21,7 @@ describe('Scenario 30', () => {
     const customerTypeValue = '000001'
     const countryCodeValue = '000001'
 
-    cy.login(username, password)
+    cy.login(username, password, screen)
 
     //***Click Hamburger
     cy.get('#banner_navigation_navigate')

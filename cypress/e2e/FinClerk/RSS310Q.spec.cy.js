@@ -5,13 +5,10 @@ describe('SIMS Finance Trial', () => {
   })
 
   it.only('Check if Up', () => {
-
-
     const errorMsg = '502 - Web server received an invalid response while acting as a gateway or proxy server.'
     cy.get('h2', { timeout: 0 })
       .first()
       .should('not.have.text', errorMsg)
-
   })
   //Handling uncaught exceptions to avoid false errors
   Cypress.on('uncaught:exception', (err) => {
@@ -22,8 +19,7 @@ describe('SIMS Finance Trial', () => {
   })
 
   it('Create a new single line purchase order as a Fin Clerk', () => {
-
-    //const username = '7ebddd7ed8863753da3b357bed62d122'
+    const screenshotFolder = 'RSS310 - Single line PO'
     const username = 'FINCLERK01D130'
     const password = 'SIMSFinance2018#'
     const screen = 'RSS310Q'
@@ -47,14 +43,13 @@ describe('SIMS Finance Trial', () => {
     const costCentre = "Music Lessons"
     const completedOrderText = "The following 1 Purchase Order(s) have been created."
 
-    cy.login(username, password)
+    cy.login(username, password, screenshotFolder)
 
     //Click Hamburger
     cy.log("Click on Hamburger")
     cy.get('#banner_navigation_navigate')
       .should('be.visible')
       .click()
-
 
     //Click on the text box in Quick launch
     cy.log("Type screen in the text box")
@@ -79,7 +74,6 @@ describe('SIMS Finance Trial', () => {
             return 'h1[id*=defaultCompanyEntry]';
           })
         }
-
       })
 
     cy.get('#search_button')
@@ -92,13 +86,11 @@ describe('SIMS Finance Trial', () => {
       .eq(0)
       .click()
 
-
     //Purchase Orders screen
     //Select Supplier
     cy.log("Select supplier")
     cy.get('#supplier_icon')
       .click()
-
 
     //Find supplier and select
     cy.log("Find supplier and select")
@@ -159,14 +151,11 @@ describe('SIMS Finance Trial', () => {
 
     cy.selectCostCentre(costCentre, "Music Lessons Income from music")
 
-
     cy.get('span[for="gl_code"]')
       .invoke("text")
       .should("eq", "Music Lessons Income from music")
 
-
-    // //Cost centre and Fund code selection for GL Code
-
+   //Cost centre and Fund code selection for GL Code
     cy.get('#save_button')
       .click()
 
@@ -192,17 +181,14 @@ describe('SIMS Finance Trial', () => {
       .invoke('text')
       .should('contain', totalOrderValue)
 
-
     //Click on Summary page
     cy.contains('Summary')
       .click()
-
 
     //Assertions for Summary page--
     cy.get('#tot_value_0')
       .invoke('text')
       .should('contain', totalOrderValue)
-
 
     cy.get('[for="supplier_0"]')
       .eq(1)
@@ -220,7 +206,6 @@ describe('SIMS Finance Trial', () => {
       .click()
 
     //Order completed page
-
     cy.get('#top_label')
       .invoke('text')
       .should('eq', completedOrderText)

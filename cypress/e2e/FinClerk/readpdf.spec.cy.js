@@ -25,23 +25,12 @@ describe('SIMS Finance Trial', () => {
     return false
   })
   it.only('Read PDF', () => {
-
-    //const username = '7ebddd7ed8863753da3b357bed62d122'
+    const screenshotFolder = 'Read PDF'
     const username = 'FINCLERK01D130'
     const password = 'SIMSFinance2018#'
     const screen = 'RSS310Q'
-    // const supplierName = 'British Telecom'
-    // const supplierItemRefText = 'Test item reference'
-    // const descText = "Test description"
-    // const descText1 = "Test description 1"
-    // const descText2 = "Test description 2"
-    // const descText3 = "Test description 3"
-    // const quantity = "3.00"
-    // const unitprice = "120.00"
-    // const costCentre = "Music Lessons"
-    // const completedOrderText = "The following 1 Purchase Order(s) have been created."
 
-    cy.login(username, password)
+    cy.login(username, password, screenshotFolder)
 
     //Click Hamburger
     cy.log("Click on Hamburger")
@@ -94,14 +83,12 @@ describe('SIMS Finance Trial', () => {
 
     })
    
-   
     cy.task('getModifiedTime', filePath).then((date) => {
       let modDate = date;
       cy.wrap(modDate).as('modDate')
       cy.task('getDifferenceBetCurrAndModTime',date).then((data)=>{
         cy.log("Diff: "+data)
         cy.wrap(data).as('diff')
-        //cy.get('@diff').should('not.be.greaterThan')
       })
     })
     
