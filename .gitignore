@@ -1,7 +1,13 @@
 **/.DS_Store
 **/node_modules
+**/cypress/results
+**/cypress/reports/html
+**/cypress/screenshots
+**/cypress/videos
 **/.git
 **/*.txt
 **/*.docx
+**/*.xlsx
 **/*.pdf
 **/*.zip
+**/reports/mochawesome

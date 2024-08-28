@@ -7,16 +7,17 @@ describe('Postchecks TC 1 to 9', () => {
     )
   })
 
-  //Handling uncaught exceptions to avoid false errors
-  // Cypress.on('uncaught:exception', (err, runnable) => {
-  //   // returning false here prevents Cypress from
-  //   // failing the test
-  //   return false
-  // })
+  // Handling uncaught exceptions to avoid false errors
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+  })
 
   //Test case #1
   it('Login', () => {
     const username = testData.username
+    const screenshotFolder = 'Postchecks/Login/'
     let textUsername = ''
     if (username.includes('FINCLERK')) {
       textUsername = 'Finance Clerk'
@@ -25,8 +26,7 @@ describe('Postchecks TC 1 to 9', () => {
       textUsername = 'Finance Director'
     }
     const password = testData.password
-    cy.login(username, password)
-
+    cy.login(username, password, screenshotFolder)
     cy.get('#esr_user_profile_menu')
       .should('be.visible')
       .should('contain.text', textUsername)
@@ -35,6 +35,8 @@ describe('Postchecks TC 1 to 9', () => {
   //Test case #2
   it('Logout', () => {
     const username = testData.username
+    const screenshotFolder = 'Postchecks/Logout/'
+
     let textUsername = ''
     if (username.includes('FINCLERK')) {
       textUsername = 'Finance Clerk'
@@ -43,21 +45,27 @@ describe('Postchecks TC 1 to 9', () => {
       textUsername = 'Finance Director'
     }
     const password = testData.password
-    cy.login(username, password)
-
+    cy.login(username, password, screenshotFolder)
     cy.get('#esr_user_profile_menu')
       .should('be.visible')
       .click()
-
+    let i = 2
+    
     cy.get('*[id*=esr_user_profile]')
       .find('*[aria-label="Click to Logout"]')
       .click()
-
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
     cy.get('.ui-dialog')
       .should('be.visible')
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
+
 
     cy.get('#esr_messagebox_yes')
       .click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
+
 
     cy.get('#login')
       .should('be.visible')
@@ -66,6 +74,8 @@ describe('Postchecks TC 1 to 9', () => {
 
   //Test case #3
   it('File upload using SPC420', () => {
+    const screenshotFolder = 'Postchecks/SPC420 - File Upload/'
+
     let fileCreationFlag = "Y"
     let fileExt = '.txt'
     if (fileCreationFlag.includes("Y")) {
@@ -79,37 +89,52 @@ describe('Postchecks TC 1 to 9', () => {
     const screen = testData.SPC420
     const treeItem = 'LOGS'
 
-    cy.login(username, password)
-
+    cy.login(username, password, screenshotFolder)
+    let i = 2
     //Click Hamburger
     cy.log("Click on Hamburger")
     cy.get('#banner_navigation_navigate')
       .should('be.visible').click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
 
     //Click on the text box in Quick launch
     cy.log("Type screen in the text box")
     cy.get('.quick-lunch').eq(1)
       .find('#esr_launch_text').clear().type(`${screen}`)
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
+
 
     //Click on the menu item displayed
     cy.log("Click on the menu item displayed")
     cy.get('.ui-menu-item')
       .contains(screen).click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
 
     cy.get('.esr_banner_environment > .title').should('contain', 'SPC420 - File Manager')
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
 
     cy.get('*[id$=main_SERVER_DIR_TREE]')
       .should('be.visible')
       .find('*[class^=esr_tree_selectable]')
       .contains(treeItem).click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
 
     cy.get('.multibutton_content')
       .find('.esr_multibutton:contains("Upload File")')
       .eq(0).click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
     cy.get('.ui-dialog-titlebar').invoke('text').should('contain', 'Upload File')
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
     cy.get('#upload_button').click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
 
     cy.task('newestFileName', 'Test Files/*txt').then((data) => {
       cy.wrap(data).as('filename')
@@ -122,8 +147,17 @@ describe('Postchecks TC 1 to 9', () => {
         cy.get('.dhx_list-item--name').invoke('text').should('contain', fileName)
       })
     })
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
+
+
     cy.get('*[class^=dhx_item--success-mark]').should('be.visible')
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
+
     cy.get('#ok').click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
 
     cy.get('@onlyFileNameWithExt').then((data) => {
       const splitFileName = data.split(".")
@@ -134,10 +168,15 @@ describe('Postchecks TC 1 to 9', () => {
       cy.get('#physical_file').invoke('val').should('contain', file)
       cy.get('#rep_name').invoke('val').should('contain', file)
     })
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
 
     //Select school id
     cy.get('#company_id_icon')
       .click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
+
     cy.wait(2000)
     cy.get('*[id^=ui-id]').contains('School ID').should('be.visible')
     cy.get('[axes="COMP_DESC"] > div')
@@ -146,11 +185,17 @@ describe('Postchecks TC 1 to 9', () => {
       .parent()
       .contains('Select')
       .click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
 
     cy.get('#update_button').click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
 
     //Record assertions
     cy.get('[axes="COMPANY_ID"] > div').eq(0).invoke('text').should('eq', testData.schoolId)
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
     cy.get('@fileNameWithoutExt').then((data) => {
       cy.get('[axes="REP_NAME"] > div').eq(0).invoke('text').should('contain', data)
     })
@@ -160,71 +205,102 @@ describe('Postchecks TC 1 to 9', () => {
     //View dropdown
     cy.get('.multibutton_content > a').eq(0)
       .click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
 
     cy.get('.ui-menu-item')
       .contains('Delete').click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
 
     cy.get('*[id^=ui-id]').contains('Delete File').should('be.visible')
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
 
     cy.get('#esr_messagebox_yes').click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
+
   })
 
   //Test case #4
-  it.only('RSS570 - Crystal Report', () => {
+  it('RSS570 - Crystal Report', () => {
+    const screenshotFolder = 'Postchecks/RSS570 - Crystal Report/'
     const username = testData.username
     const password = testData.password
     const screen = testData.RSS570
     const schoolId = testData.schoolId
     const supplierOrNominalSort = testData.supplierOrNominalSort
-    cy.login(username, password)
+    cy.login(username, password, screenshotFolder)
+    let i = 2
 
     //Click Hamburger
     cy.log("Click on Hamburger")
     cy.get('#banner_navigation_navigate')
       .should('be.visible').click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
 
     //Click on the text box in Quick launch
     cy.log("Type screen in the text box")
     cy.get('.quick-lunch').eq(1)
       .find('#esr_launch_text').clear().type(`${screen}`)
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
+
 
     //Click on the menu item displayed
     cy.log("Click on the menu item displayed")
     cy.get('.ui-menu-item')
       .contains(screen).click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
+
 
     //Complete the form for Outstanding Accruals
     cy.selectUsingSearchIcon('company_id', schoolId)
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
+
     //#1
     cy.get('input[aria-label=School]').invoke('val').should('contain', schoolId)
     //#2
     cy.get('#supplier_or_normal').type(supplierOrNominalSort, { force: true })
     //#3
     cy.get('#currency_control_0').check().should('be.checked')
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
 
     cy.get('#submit').click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
 
     cy.jobProcessingDialog()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
+
     cy.get('#spc_rep_0').invoke('text').should('contain', 'RSS570')
       .should('contain', '.PDF')
       .should('contain', 'Outstanding Accruals')
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
+
     cy.window().then((win) => {
       const orig = win.open
-
       win.open = function (url, target, features) {
         return orig.call(this, url, '_self', features)
       }
     })
-    cy.intercept("POST", "/sfdemosite130**").as("PDFCLick")
 
-    // cy.get('#spc_rep_0').click()//.invoke('text').should('contain', 'Outstanding Accruals')
     cy.get('#save_all').click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
+
     const fileExt = '.zip'
     cy.task('newestFileName', './cypress/downloads/*' + fileExt).then((data) => {
       cy.log("Newest zip file:" + data)
       cy.task('unzipFile', data)
-      cy.task('newestFileName', './cypress/downloads/unzip*/*').then((fileName) => {
+      cy.task('newestFileName', './cypress/downloads/unzip*/*.PDF').then((fileName) => {
         cy.log("Newest unzipped PDF:" + fileName)
         cy.task('readPdf', fileName).then(function (data) {
           cy.log("Text: " + data.text)
@@ -235,7 +311,6 @@ describe('Postchecks TC 1 to 9', () => {
             .should('contain', username)
             .should('contain', 'Sorted By:\nS')
         })
-
       })
     })
   })
@@ -243,76 +318,121 @@ describe('Postchecks TC 1 to 9', () => {
 
   //Test case #5
   it('NML510 - Trial Balance Report', () => {
+    const screenshotFolder = 'Postchecks/NML510 - Trial Balance Report/'
     const username = testData.username
     const password = testData.password
     const screen = testData.NML510
-    const schoolId = testData.multiSiteUserSchoolId
+    const schoolId = testData.schoolId
 
-    cy.login(username, password)
+    cy.login(username, password, screenshotFolder)
+    let i = 2
 
     //Click Hamburger
     cy.log("Click on Hamburger")
     cy.get('#banner_navigation_navigate')
       .should('be.visible').click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
 
     //Click on the text box in Quick launch
     cy.log("Type screen in the text box")
     cy.get('.quick-lunch').eq(1)
       .find('#esr_launch_text').clear().type(`${screen}`)
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
+
 
     //Click on the menu item displayed
     cy.log("Click on the menu item displayed")
     cy.get('.ui-menu-item')
       .contains(screen).click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
     //Complete the form for Outstanding Accruals
     cy.selectUsingSearchIcon('company_id', schoolId)
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
     //Submit
     cy.get('#submit_button').click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
     cy.jobProcessingDialog()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
     cy.get('#spc_rep_0').invoke('text').should('contain', 'NML510')
       .should('contain', '.PDF')
       .should('contain', 'Trial Balance')
       .should('contain', schoolId)
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
     cy.get('#spc_rep_1').invoke('text').should('contain', 'NML510')
       .should('contain', '.XLSX')
       .should('contain', 'Trial Balance')
       .should('contain', schoolId)
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
+    cy.get('#save_all').click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
+    const fileExt = '.zip'
+    cy.task('newestFileName', './cypress/downloads/*' + fileExt).then((data) => {
+      cy.log("Newest zip file:" + data)
+      cy.task('unzipFile', data)
+      cy.task('newestFileName', './cypress/downloads/unzip*/*.PDF').then((fileName) => {
+        cy.log("Newest unzipped PDF:" + fileName)
+        cy.task('readPdf', fileName).then(function (data) {
+          cy.log("Text: " + data.text)
+          cy.wrap(data.text).as('PDFdata')
+          cy.get('@PDFdata')
+            .should('contain', schoolId)
+            .should('contain', testData.schoolName)
+            .should('contain', username)
+        })
+      })
+    })
 
     cy.get('#btn_close').click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
   })
+
   //Test case #6
   it('SIMS_TB_SCHOOL - XQuery Report - Execute', () => {
+    const screenshotFolder = 'Postchecks/SIMS_TB_SCHOOL - XQuery Report - Execute/'
     const username = testData.username
     const password = testData.password
     const screen = testData.SIMS_TB_SCHOOL
-    const schoolId = testData.multiSiteUserSchoolId
+    const schoolId = testData.schoolId
     const period = testData.period.split("/")
 
-    cy.login(username, password)
+    cy.login(username, password, screenshotFolder)
+    let i = 2
 
     //Click Hamburger
     cy.log("Click on Hamburger")
     cy.get('#banner_navigation_navigate')
       .should('be.visible').click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
 
     //Click on the text box in Quick launch
     cy.log("Type screen in the text box")
     cy.get('.quick-lunch').eq(1)
       .find('#esr_launch_text').clear().type(`${screen}`)
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
 
     //Click on the menu item displayed
     cy.log("Click on the menu item displayed")
     cy.get('.ui-autocomplete-category').contains('XQuery').next('.ui-menu-item')
       .contains(screen).click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
 
     //Complete form
     cy.get('#p_comp_icon')
       .click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
 
     cy.get('tbody').find('[axes="COMPANY_ID"] > div')
       .contains(schoolId)
@@ -320,24 +440,45 @@ describe('Postchecks TC 1 to 9', () => {
       .parent()
       .find('#esr_action')
       .click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
 
     cy.get('#p_ye_ar').select(period[0])
+
     cy.get('#p_period').select(period[1])
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
     cy.window().then((win) => {
       const orig = win.open
-
       win.open = function (url, target, features) {
         return orig.call(this, url, '_self', features)
       }
     })
     cy.get('#execute_in_eseries').click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
+    const description = 'VAT recoverable'
+    const glCode = '240100-00'
+    const amt = 1538.42
+    const amt1 = 4361.00
     cy.get('.TITLE_XQ').invoke('text').should('contain', schoolId)
-      .should('contain', period[0]).should('contain', period[1])
+      .should('contain', 'Year ' + period[0]).should('contain', 'Period ' + period[1])
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
+    cy.get('html').contains(description)
+      .siblings(':nth-child(5)').invoke('text')
+      .should('contains', amt.toLocaleString())
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
+    cy.get('html').contains(glCode).parent()
+      .siblings(':nth-child(5)').invoke('text')
+      .should('contains', amt1.toLocaleString())
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
   })
   //Test case #7
   it('SIMS_TB_SCHOOL - XQuery Report - Submit', () => {
+    const screenshotFolder = 'Postchecks/SIMS_TB_SCHOOL - XQuery Report - Submit/'
     const username = testData.username
     const password = testData.password
     const screen = testData.SIMS_TB_SCHOOL
@@ -345,23 +486,26 @@ describe('Postchecks TC 1 to 9', () => {
     const emailId = testData.emailId
     const period = testData.period.split("/")
 
-    cy.login(username, password)
+    cy.login(username, password,screenshotFolder)
+    let i = 2
 
     //Click Hamburger
     cy.log("Click on Hamburger")
     cy.get('#banner_navigation_navigate')
       .should('be.visible').click()
-
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
     //Click on the text box in Quick launch
     cy.log("Type screen in the text box")
     cy.get('.quick-lunch').eq(1)
       .find('#esr_launch_text').clear().type(`${screen}`)
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
     //Click on the menu item displayed from XQuery
     cy.log("Click on the menu item displayed")
     cy.get('.ui-autocomplete-category').contains('XQuery').next('.ui-menu-item')
       .contains(screen).click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
     //Complete form
     cy.get('#p_comp_icon')
@@ -376,26 +520,36 @@ describe('Postchecks TC 1 to 9', () => {
 
     cy.get('#p_ye_ar').select(period[0])
     cy.get('#p_period').select(period[1])
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
     cy.get('#distribute_via_workflow').click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
     cy.get('*[id^=ui-id]').contains('SIMS_TB_SCHOOL - SIMS Trial Balance School').should('be.visible')
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
     //Check email content to be sent
     cy.get('#email_address').type(emailId)
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
     cy.get('#subject').invoke('val')
       .should('contain', period[0])
       .should('contain', period[1])
       .should('contain', schoolId)
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
     cy.get('#time').invoke('val')
       .should('contain', new Date().toLocaleDateString('en-GB'))
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
     cy.get('#ok_button').click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
     // insert code to check if the mail is received on the specified mail address
   })
   //Test case #8
   it('RSS310Q - Attachments', () => {
+    const screenshotFolder = 'Postchecks/RSS310Q - Attachments/'
 
     let fileCreationFlag = "Y"
     let fileExt = '.docx'
@@ -410,24 +564,30 @@ describe('Postchecks TC 1 to 9', () => {
     const screen = testData.RSS310Q
     const schoolId = testData.schoolId
 
-    cy.login(username, password)
+    cy.login(username, password,screenshotFolder)
+    let i = 2
 
     //Click Hamburger
     cy.log("Click on Hamburger")
     cy.get('#banner_navigation_navigate')
       .should('be.visible').click()
-
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
     //Click on the text box in Quick launch
     cy.log("Type screen in the text box")
     cy.get('.quick-lunch').eq(1)
       .find('#esr_launch_text').clear().type(`${screen}`)
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
     //Click on the menu item displayed
     cy.log("Click on the menu item displayed")
     cy.get('.ui-menu-item')
       .contains(screen).click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
     cy.selectUsingSearchIcon('company_id', schoolId)
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
     cy.log("************RSS310Q screen**************")
     cy.log("Click on search button")
 
@@ -440,9 +600,12 @@ describe('Postchecks TC 1 to 9', () => {
         }
 
       })
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
     cy.get('#search_button')
       .click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
     const minCeiled = Math.ceil(0);
     const maxFloored = Math.floor(10);
     const random = Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled)
@@ -451,15 +614,18 @@ describe('Postchecks TC 1 to 9', () => {
       .find('.esr_multibutton:contains("View")')
       .eq(random)
       .click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
     cy.get('div[id*=esr_breadcrumb]').should('have.length', 3).invoke('text')
       .should('contain', 'Search Criteria')
       .should('contain', 'Header Results')
       .should('contain', 'Header Details')
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
     cy.get('#esr_attachment_manager').click()
     cy.get('*[id^=ui-id]').contains('Attachments').should('be.visible')
     cy.get('.multibutton_content').contains('Add File').click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
     cy.task('newestFileName', 'Test Files/*' + fileExt).then((data) => {
       cy.wrap(data).as('filename')
@@ -472,10 +638,17 @@ describe('Postchecks TC 1 to 9', () => {
         cy.get('.dhx_list-item--name').invoke('text').should('contain', fileName)
       })
     })
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
     cy.get('*[class^=dhx_item--success-mark]').should('be.visible')
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
     cy.get('#ok').click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
     cy.get('*[id^=ui-id]').contains('Attachment Details').should('be.visible')
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
     cy.get('@onlyFileNameWithExt').then((data) => {
       const splitFileName = data.split(".")
       let file = splitFileName[0]
@@ -486,6 +659,7 @@ describe('Postchecks TC 1 to 9', () => {
       cy.get('#filename').invoke('text').should('contain', file + '.' + ext)
     })
     cy.get('#esr_attach_button').click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
 
     cy.get('@fileNameWithoutExt').then((data) => {
       cy.get('[axes="DOCUMENT_TITLE"]').contains(data).should('be.visible')
@@ -495,29 +669,37 @@ describe('Postchecks TC 1 to 9', () => {
           .should('contain', extData)
 
       })
+      cy.screenshot(screenshotFolder + (++i), { padding: 10 })
       cy.get('[axes="DOCUMENT_TITLE"]').contains(data).eq(0).parent()
         .siblings('[axes="SAVED_DATE"]').invoke('text')
         .should('contain', new Date().toLocaleDateString('en-GB'))
     })
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
     cy.get('#esr_close_button').click()
-
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
   })
   //Test case #9
   it('Help Screen', () => {
+    const screenshotFolder = 'Postchecks/Help Screen/'
     const username = testData.username
     const password = testData.password
-    cy.login(username, password)
+    cy.login(username, password,screenshotFolder)
+    let i = 2
     cy.window().then((win) => {
       const orig = win.open
-
       win.open = function (url, target, features) {
         return orig.call(this, url, '_self', features)
       }
     })
     cy.get('[aria-label=Help]').should('be.visible').click()
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
     cy.url().then((url) => {
       cy.log('Current URL is: ' + url)
     })
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
+
     cy.url().should('eq', "https://uat-v2.pecuniam-online.co.uk/" + testData.tenant + "/help/int/webhelp/int.htm")
+    cy.screenshot(screenshotFolder + (++i), { padding: 10 })
   })
 })

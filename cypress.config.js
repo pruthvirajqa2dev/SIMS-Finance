@@ -4,10 +4,16 @@ const pdf = require('pdf-parse');
 const path = require('path');
 
 module.exports = defineConfig({
-
-  viewportWidth: 1920,
-  viewportHeight: 1080,
+  trashAssetsBeforeRuns: false,
+  viewportWidth: 1100,
+  viewportHeight: 800,
   reporter: 'cypress-mochawesome-reporter',
+  reporterOptions: {
+      "reportDir": "reports/mochawesome",
+      "overwrite": false,
+      "html": false,
+      "json": true
+   },
   e2e: {
     setupNodeEvents(on, config) {
       // implement node event listeners here
@@ -97,5 +103,5 @@ module.exports = defineConfig({
     },
   },
   video: true,
-  videoCompression: 10,
+  // videoCompression: 10,
 });

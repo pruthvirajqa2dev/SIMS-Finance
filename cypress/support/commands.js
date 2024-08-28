@@ -24,7 +24,7 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-Cypress.Commands.add('login', (username, password) => {
+Cypress.Commands.add('login', (username, password,screenshotFolder) => {
   //Populate username
   cy.get('.username')
     .should('be.visible')
@@ -33,11 +33,12 @@ Cypress.Commands.add('login', (username, password) => {
   cy.get('.password')
     .should('be.visible')
     .type(`${password}`)
-
+    cy.screenshot(screenshotFolder+'1', { padding: 10 })
   // Hit enter
   cy.get('.go_button')
     .should('be.visible')
     .click()
+    cy.screenshot(screenshotFolder+'2', { padding: 10 })
 
   cy.url().then((url) => {
     cy.log('Current URL is: ' + url)
