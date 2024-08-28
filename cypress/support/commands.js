@@ -33,12 +33,12 @@ Cypress.Commands.add('login', (username, password, screenshotFolder) => {
   cy.get('.password')
     .should('be.visible')
     .type(`${password}`)
-  cy.screenshot(screenshotFolder + '1', { padding: 10 })
+  cy.screenshot(screenshotFolder + '1')
   // Hit enter
   cy.get('.go_button')
     .should('be.visible')
     .click()
-  cy.screenshot(screenshotFolder + '2', { padding: 10 })
+  cy.screenshot(screenshotFolder + '2')
 
   cy.url().then((url) => {
     cy.log('Current URL is: ' + url)
