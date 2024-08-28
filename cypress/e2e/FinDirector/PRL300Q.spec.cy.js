@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import testData from '../../fixtures/example.json'
 describe('Scenario 30', () => {
   beforeEach(() => {

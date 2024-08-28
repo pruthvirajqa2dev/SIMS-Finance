@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import testData from '../../fixtures/example.json'
 describe('Postchecks TC9 onwards', () => {
   beforeEach(() => {
@@ -8,9 +9,10 @@ describe('Postchecks TC9 onwards', () => {
   })
 
   //Handling uncaught exceptions to avoid false errors
-  Cypress.on('uncaught:exception', (err, runnable) => {
+  Cypress.on('uncaught:exception', (err) => {
     // returning false here prevents Cypress from
     // failing the test
+    console.log(err)
     return false
   })
 
@@ -500,13 +502,10 @@ describe('Postchecks TC9 onwards', () => {
     })
   })
   it('test', () => {
-    let quantArr = [1.2, 2.3, 3.4, 4.5, 5.6, 6.7, 7.8, 8.9, 9.1]
     const quantity = 1// String(quantArr[Math.floor(Math.random() * quantArr.length)])
     cy.log("Quantity: " + quantity)
-    let unitPriceArr = [120.12, 230.23, 340.34, 450.45, 560.56, 670.67, 780.78]
     const unitprice = 111.10// String(unitPriceArr[Math.floor(Math.random() * unitPriceArr.length)])
     cy.log("Unit price: " + unitprice.toFixed(2))
-    let vatCodeArr = ["EXM", "NON", "RED", "STD", "ZER"]
     const vatCode = "RED"// vatCodeArr[Math.floor(Math.random() * vatCodeArr.length)]
     cy.log("VAT Code: " + vatCode.toString())
     var vatPercent
@@ -624,7 +623,7 @@ describe('Postchecks TC9 onwards', () => {
     cy.window().then((win) => {
       const orig = win.open
 
-      win.open = function (url, target, features) {
+      win.open = function (url, _target, features) {
         return orig.call(this, url, '_self', features)
       }
     })

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 describe('Scenario 30', () => {
   beforeEach(() => {
     cy.visit('https://uat-v2.pecuniam-online.co.uk/auth/esr.elogin', { failOnStatusCode: false })
@@ -20,8 +21,6 @@ describe('Scenario 30', () => {
     const countryCodeText = 'Country Code'
     const customerTypeValue = '000001'
     const countryCodeValue = '000001'
-    const countryCode = 'GB'
-    const areaCode = '+44'
 
     cy.login(username, password)
 

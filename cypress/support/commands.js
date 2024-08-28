@@ -24,7 +24,7 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-Cypress.Commands.add('login', (username, password,screenshotFolder) => {
+Cypress.Commands.add('login', (username, password, screenshotFolder) => {
   //Populate username
   cy.get('.username')
     .should('be.visible')
@@ -33,12 +33,12 @@ Cypress.Commands.add('login', (username, password,screenshotFolder) => {
   cy.get('.password')
     .should('be.visible')
     .type(`${password}`)
-    cy.screenshot(screenshotFolder+'1', { padding: 10 })
+  cy.screenshot(screenshotFolder + '1', { padding: 10 })
   // Hit enter
   cy.get('.go_button')
     .should('be.visible')
     .click()
-    cy.screenshot(screenshotFolder+'2', { padding: 10 })
+  cy.screenshot(screenshotFolder + '2', { padding: 10 })
 
   cy.url().then((url) => {
     cy.log('Current URL is: ' + url)
@@ -72,24 +72,24 @@ Cypress.Commands.add('selectCostCentre', (costCentre) => {
     .click()
 })
 Cypress.Commands.add('jobProcessingDialog', () => {
-   //Job processing dialog
-   cy.get('*[id^=ui-id]').contains('Job Processing').should('be.visible')
-   cy.get('#btn_ok').click()
-   //Background Processing
-   cy.get('*[id^=ui-id]').contains('Background Processing').should('be.visible')
-   cy.get('.faicon > i[style*="color:green"]',{timeout:60000}).should('be.visible')
-  })
+  //Job processing dialog
+  cy.get('*[id^=ui-id]').contains('Job Processing').should('be.visible')
+  cy.get('#btn_ok').click()
+  //Background Processing
+  cy.get('*[id^=ui-id]').contains('Background Processing').should('be.visible')
+  cy.get('.faicon > i[style*="color:green"]', { timeout: 60000 }).should('be.visible')
+})
 
-  Cypress.Commands.add('selectFirstLedgerCodeAndFundCode', () => {
-    cy.get('#e1_part_code_lookup')
-      .click()
-    cy.get('[aria-describedby$="glcodepartlookup_container"]')
-      .find('.multibutton_content')
-      .find('.esr_hover:contains("Select")').eq(0).click()
-      
-    cy.get('#e2_part_code_lookup')
+Cypress.Commands.add('selectFirstLedgerCodeAndFundCode', () => {
+  cy.get('#e1_part_code_lookup')
     .click()
-    cy.get('[aria-describedby$="glcodepartlookup_container"]')
-      .find('.multibutton_content')
-      .find('.esr_hover:contains("Select")').eq(0).click()
-  })
+  cy.get('[aria-describedby$="glcodepartlookup_container"]')
+    .find('.multibutton_content')
+    .find('.esr_hover:contains("Select")').eq(0).click()
+
+  cy.get('#e2_part_code_lookup')
+    .click()
+  cy.get('[aria-describedby$="glcodepartlookup_container"]')
+    .find('.multibutton_content')
+    .find('.esr_hover:contains("Select")').eq(0).click()
+})

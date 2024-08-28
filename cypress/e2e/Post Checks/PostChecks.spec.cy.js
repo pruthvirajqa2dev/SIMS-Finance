@@ -50,7 +50,7 @@ describe('Postchecks TC 1 to 9', () => {
       .should('be.visible')
       .click()
     let i = 2
-    
+
     cy.get('*[id*=esr_user_profile]')
       .find('*[aria-label="Click to Logout"]')
       .click()
@@ -486,7 +486,7 @@ describe('Postchecks TC 1 to 9', () => {
     const emailId = testData.emailId
     const period = testData.period.split("/")
 
-    cy.login(username, password,screenshotFolder)
+    cy.login(username, password, screenshotFolder)
     let i = 2
 
     //Click Hamburger
@@ -564,7 +564,7 @@ describe('Postchecks TC 1 to 9', () => {
     const screen = testData.RSS310Q
     const schoolId = testData.schoolId
 
-    cy.login(username, password,screenshotFolder)
+    cy.login(username, password, screenshotFolder)
     let i = 2
 
     //Click Hamburger
@@ -683,7 +683,7 @@ describe('Postchecks TC 1 to 9', () => {
     const screenshotFolder = 'Postchecks/Help Screen/'
     const username = testData.username
     const password = testData.password
-    cy.login(username, password,screenshotFolder)
+    cy.login(username, password, screenshotFolder)
     let i = 2
     cy.window().then((win) => {
       const orig = win.open

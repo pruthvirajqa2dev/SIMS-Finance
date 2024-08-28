@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 describe('SIMS Finance Trial', () => {
   beforeEach(() => {
     cy.visit('https://uat-v2.pecuniam-online.co.uk/auth/esr.elogin', { failOnStatusCode: false })
@@ -13,11 +14,13 @@ describe('SIMS Finance Trial', () => {
 
   })
   //Handling uncaught exceptions to avoid false errors
-  Cypress.on('uncaught:exception', (err, runnable) => {
+  Cypress.on('uncaught:exception', (err) => {
     // returning false here prevents Cypress from
     // failing the test
+    console.log(err)
     return false
   })
+
   it('Create a new single line purchase order as a Fin Clerk', () => {
 
     //const username = '7ebddd7ed8863753da3b357bed62d122'

@@ -9,11 +9,11 @@ module.exports = defineConfig({
   viewportHeight: 800,
   reporter: 'cypress-mochawesome-reporter',
   reporterOptions: {
-      "reportDir": "reports/mochawesome",
-      "overwrite": false,
-      "html": false,
-      "json": true
-   },
+    "reportDir": "reports/mochawesome",
+    "overwrite": false,
+    "html": false,
+    "json": true
+  },
   e2e: {
     setupNodeEvents(on, config) {
       // implement node event listeners here
@@ -88,9 +88,9 @@ module.exports = defineConfig({
         unzipFile(directory) {
           return new Promise((resolve) => {
             console.log('Into unzip file')
-            console.log('directory:'+directory)
+            console.log('directory:' + directory)
             const decompress = require("decompress");
-            decompress(directory, "./cypress/downloads/unzip"+Date.now().toString())
+            decompress(directory, "./cypress/downloads/unzip" + Date.now().toString())
               .then((files) => {
                 resolve(files)
               })
@@ -103,5 +103,4 @@ module.exports = defineConfig({
     },
   },
   video: true,
-  // videoCompression: 10,
 });

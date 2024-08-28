@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 describe('SIMS Finance Trial', () => {
   beforeEach(() => {
     cy.visit('https://uat-v2.pecuniam-online.co.uk/auth/esr.elogin', {
@@ -17,9 +18,10 @@ describe('SIMS Finance Trial', () => {
 
   })
   //Handling uncaught exceptions to avoid false errors
-  Cypress.on('uncaught:exception', (err, runnable) => {
+  Cypress.on('uncaught:exception', (err) => {
     // returning false here prevents Cypress from
     // failing the test
+    console.log(err)
     return false
   })
   it.only('Read PDF', () => {
