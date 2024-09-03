@@ -20,7 +20,6 @@ jobs:
           runTests: true
           # Starts web server for E2E tests - replace with your own server invocation
           # https://docs.cypress.io/guides/continuous-integration/introduction#Boot-your-server
-          build: npm run build
           start: npm start
           browser: chrome
           #wait-on: 'http://0.0.0.0:3000' # Waits for above
