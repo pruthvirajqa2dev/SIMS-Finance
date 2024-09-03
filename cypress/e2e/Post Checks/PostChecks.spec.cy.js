@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import testData from '../../fixtures/example.json'
-describe.only('Postchecks TC 1 to 9', () => {
+describe('Postchecks TC 1 to 9', () => {
   beforeEach(() => {
     cy.visit('https://uat-v2.pecuniam-online.co.uk/auth/esr.elogin', {
       failOnStatusCode: false,
@@ -17,7 +17,7 @@ describe.only('Postchecks TC 1 to 9', () => {
   })
 
   //Test case #1
-  it.only('Login', () => {
+  it('Login', () => {
     const username = testData.username
     const screenshotFolder = 'Postchecks/RunOn'+new Date().toLocaleDateString('en-GB').replaceAll('/','')
     +'/'+'Hour '+new Date().getHours()+'/Login/'
