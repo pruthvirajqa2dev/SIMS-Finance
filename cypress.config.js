@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable no-undef */
 const { defineConfig } = require("cypress");
 const fs = require('fs');
 const pdf = require('pdf-parse');
 const path = require('path');
 
 module.exports = defineConfig({
+  projectId: 'asx1dc',
   trashAssetsBeforeRuns: false,
   viewportWidth: 1100,
   viewportHeight: 800,
@@ -15,6 +18,7 @@ module.exports = defineConfig({
     "json": true
   },
   e2e: {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setupNodeEvents(on, config) {
       // implement node event listeners here
       require('cypress-mochawesome-reporter/plugin')(on);

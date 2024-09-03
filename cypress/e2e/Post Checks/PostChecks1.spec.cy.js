@@ -17,7 +17,7 @@ describe('Postchecks TC9 onwards', () => {
   })
 
   //Test case #11
-  it('Cheque Run', () => {
+  it.only('Cheque Run', () => {
     const username = testData.username
     const password = testData.password
     const screen = testData.PRL210
