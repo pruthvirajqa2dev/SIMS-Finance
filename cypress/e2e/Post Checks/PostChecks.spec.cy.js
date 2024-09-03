@@ -656,5 +656,6 @@ describe('Postchecks TC 1 to 9', () => {
 
     cy.url().should('eq', "https://uat-v2.pecuniam-online.co.uk/" + testData.tenant + "/help/int/webhelp/int.htm")
     cy.screenshot(screenshotFolder + (++i))
+    cy.end()
   })
 })
