@@ -6,7 +6,7 @@ const pdf = require('pdf-parse');
 const path = require('path');
 
 module.exports = defineConfig({
-  projectId: 'asx1dc',
+  projectId: '8b68kr',
   trashAssetsBeforeRuns: false,
   viewportWidth: 1100,
   viewportHeight: 800,
