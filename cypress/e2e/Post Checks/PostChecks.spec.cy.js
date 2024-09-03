@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import testData from '../../fixtures/example.json'
-describe('Postchecks TC 1 to 9', () => {
+describe.only('Postchecks TC 1 to 9', () => {
   beforeEach(() => {
     cy.visit('https://uat-v2.pecuniam-online.co.uk/auth/esr.elogin', {
       failOnStatusCode: false,
