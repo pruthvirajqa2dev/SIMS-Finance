@@ -647,7 +647,7 @@ describe('Postchecks TC 1 to 9', () => {
       }
     })
     cy.get('[aria-label=Help]').should('be.visible').click()
-    // cy.screenshot(screenshotFolder + (++i))
+    cy.screenshot(screenshotFolder + (++i))
 
     cy.url().then((url) => {
       cy.log('Current URL is: ' + url)
