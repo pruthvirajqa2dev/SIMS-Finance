@@ -21,8 +21,8 @@ jobs:
           # https://docs.cypress.io/guides/continuous-integration/introduction#Boot-your-server
           start: npx cypress run --spec 'cypress/e2e/Post Checks/PostChecks.spec.cy.js' --browser chrome --record false
           browser: chrome
-          wait-on: 'http://127.0.0.1:3000' # Waits for above
-          wait-on-timeout: 120
+          #wait-on: 'http://0.0.0.0:3000' # Waits for above
+          # wait-on-timeout: 60
           # Records to Cypress Cloud 
           # https://docs.cypress.io/guides/cloud/projects#Set-up-a-project-to-record
           record: false
