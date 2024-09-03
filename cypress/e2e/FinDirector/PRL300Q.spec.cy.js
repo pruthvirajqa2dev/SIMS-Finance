@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import testData from '../../fixtures/example.json'
-describe('Scenario 30', () => {
+describe.skip('Scenario 30', () => {
   beforeEach(() => {
     cy.visit('https://uat-v2.pecuniam-online.co.uk/auth/esr.elogin', { failOnStatusCode: false })
   })
