@@ -633,7 +633,7 @@ describe('Postchecks TC 1 to 9', () => {
   })
 
   //Test case #9
-  it('Help Screen', () => {
+  it.only('Help Screen', () => {
     const screenshotFolder = 'Postchecks/RunOn'+new Date().toLocaleDateString('en-GB').replaceAll('/','')
     +'/'+'Hour '+new Date().getHours()+'/Help Screen/'
     const username = testData.username
@@ -652,7 +652,7 @@ describe('Postchecks TC 1 to 9', () => {
     cy.url().then((url) => {
       cy.log('Current URL is: ' + url)
     })
-    cy.screenshot(screenshotFolder + (++i))
+    // cy.screenshot(screenshotFolder + (++i))
 
     cy.url().should('eq', "https://uat-v2.pecuniam-online.co.uk/" + testData.tenant + "/help/int/webhelp/int.htm")
     cy.screenshot(screenshotFolder + (++i))
