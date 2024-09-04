@@ -99,7 +99,6 @@ describe("Postchecks TC9 onwards", () => {
             );
             const screen = testData.PRL300Q;
             for (let i = 0; i < 3; i++) {
-                //############Invoice calculation START #################################
                 let costCentreArr = [
                     "ESFA Grants",
                     "Pupil Premium",

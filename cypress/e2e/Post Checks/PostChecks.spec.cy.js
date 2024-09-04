@@ -33,6 +33,8 @@ describe("Postchecks TC 1 to 9", () => {
         }
         const password = testData.password;
         cy.login(username, password, screenshotFolder);
+        cy.log("Logged in");
+        cy.log("Verify user name");
         cy.get("#esr_user_profile_menu")
             .should("be.visible")
             .should("contain.text", textUsername);
@@ -51,16 +53,19 @@ describe("Postchecks TC 1 to 9", () => {
 
         const password = testData.password;
         cy.login(username, password, screenshotFolder);
+        cy.log("Logged in");
+        cy.log("Click on profile menu");
         cy.get("#esr_user_profile_menu").should("be.visible").click();
         let i = 2;
         cy.screenshot(screenshotFolder + ++i);
+        cy.log("Click on logout button");
         cy.get("*[id*=esr_user_profile]")
             .find('*[aria-label="Click to Logout"]')
             .click();
         cy.screenshot(screenshotFolder + ++i);
         cy.get(".ui-dialog").should("be.visible");
         cy.screenshot(screenshotFolder + ++i);
-
+        cy.log("Click Yes on dialog box");
         cy.get("#esr_messagebox_yes").click();
         cy.screenshot(screenshotFolder + ++i);
 
