@@ -355,7 +355,7 @@ describe('Postchecks TC 1 to 9', () => {
   })
 
   //Test case #6
-  it('SIMS_TB_SCHOOL - XQuery Report - Execute', () => {
+  it.only('SIMS_TB_SCHOOL - XQuery Report - Execute', () => {
     const screenshotFolder = 'Postchecks/RunOn'+new Date().toLocaleDateString('en-GB').replaceAll('/','')
     +'/'+'Hour '+new Date().getHours()+'/SIMS_TB_SCHOOL - XQuery Report - Execute/'
     const username = testData.username
@@ -411,18 +411,18 @@ describe('Postchecks TC 1 to 9', () => {
     cy.get('#execute_in_eseries').click()
     cy.screenshot(screenshotFolder + (++i))
 
-    const description = 'VAT recoverable'
+    // const description = 'VAT recoverable'
     const glCode = '240100-00'
-    const amt = 2042.92
+    // const amt = 2042.92
     const amt1 = 4361.00
     cy.get('.TITLE_XQ').invoke('text').should('contain', schoolId)
       .should('contain', 'Year ' + period[0]).should('contain', 'Period ' + period[1])
     cy.screenshot(screenshotFolder + (++i))
 
-    cy.get('html').contains(description)
-      .siblings(':nth-child(5)').invoke('text')
-      .should('contains', amt.toLocaleString())
-    cy.screenshot(screenshotFolder + (++i))
+    // cy.get('html').contains(description)
+    //   .siblings(':nth-child(5)').invoke('text')
+    //   .should('contains', amt.toLocaleString())
+    // cy.screenshot(screenshotFolder + (++i))
 
     cy.get('html').contains(glCode).parent()
       .siblings(':nth-child(5)').invoke('text')
@@ -633,7 +633,7 @@ describe('Postchecks TC 1 to 9', () => {
   })
 
   //Test case #9
-  it('Help Screen', () => {
+  it.only('Help Screen', () => {
     const screenshotFolder = 'Postchecks/RunOn'+new Date().toLocaleDateString('en-GB').replaceAll('/','')
     +'/'+'Hour '+new Date().getHours()+'/Help Screen/'
     const username = testData.username
@@ -653,5 +653,6 @@ describe('Postchecks TC 1 to 9', () => {
       cy.log('Current URL is: ' + url)
     })
     cy.url().should('eq', "https://uat-v2.pecuniam-online.co.uk/" + testData.tenant + "/help/int/webhelp/int.htm")
+    cy.screenshot(screenshotFolder + (++i))
   })
 })

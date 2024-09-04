@@ -17,6 +17,7 @@ module.exports = defineConfig({
     "html": false,
     "json": true
   },
+  chromeWebSecurity: false,
   e2e: {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setupNodeEvents(on, config) {
