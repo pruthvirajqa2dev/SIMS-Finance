@@ -1,18 +1,8 @@
 {
-  "compilerOptions": {
-    "target": "es5",
-    "lib": [
-      "es5",
-      "dom"
-    ],
-    "types": [
-      "cypress",
-      "node",
-      "cypress-real-events"
-    ]
-  },
-  "include": [
-    "**/*.ts",
-    "e2e/FinClerk/RSS310Q.spec.cy.js"
-  ]
+    "compilerOptions": {
+        "target": "es5",
+        "lib": ["es5", "dom"],
+        "types": ["cypress", "node", "cypress-real-events"]
+    },
+    "include": ["**/*.ts", "e2e/FinClerk/RSS310Q.spec.cy.js"]
 }
