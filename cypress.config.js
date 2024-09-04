@@ -18,7 +18,9 @@ module.exports = defineConfig({
     json: true,
   },
   chromeWebSecurity: false,
+  numTestsKeptInMemory: 0,
   e2e: {
+    baseUrl: "https://uat-v2.pecuniam-online.co.uk",
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setupNodeEvents(on, config) {
       // implement node event listeners here
@@ -52,7 +54,7 @@ module.exports = defineConfig({
         getCurrentTime() {
           return new Promise((resolve) => {
             resolve(
-              new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
+              new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
             );
           });
         },
@@ -64,8 +66,8 @@ module.exports = defineConfig({
               Math.abs(
                 new Date().toLocaleString("en-US", {
                   timeZone: "Asia/Kolkata",
-                }) - modDate,
-              ) / 1000,
+                }) - modDate
+              ) / 1000
             );
           });
         },
@@ -81,7 +83,7 @@ module.exports = defineConfig({
                 if (err) {
                   resolve(null);
                 }
-              },
+              }
             );
             resolve("File created");
           });
@@ -110,7 +112,7 @@ module.exports = defineConfig({
             const decompress = require("decompress");
             decompress(
               directory,
-              "./cypress/downloads/unzip" + Date.now().toString(),
+              "./cypress/downloads/unzip" + Date.now().toString()
             )
               .then((files) => {
                 resolve(files);

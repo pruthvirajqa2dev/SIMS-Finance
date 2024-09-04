@@ -1,9 +1,7 @@
 /* eslint-disable no-undef */
 describe.skip("SIMS Finance Trial", () => {
     beforeEach(() => {
-        cy.visit("https://uat-v2.pecuniam-online.co.uk/auth/esr.elogin", {
-            failOnStatusCode: false
-        });
+        cy.visit("/");
     });
 
     it.only("Check if Up", () => {

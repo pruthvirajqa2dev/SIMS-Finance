@@ -1,10 +1,8 @@
 /* eslint-disable no-undef */
 import testData from "../../fixtures/example.json";
-describe.skip("Scenario 30", () => {
+describe("Scenario 30", () => {
     beforeEach(() => {
-        cy.visit("https://uat-v2.pecuniam-online.co.uk/auth/esr.elogin", {
-            failOnStatusCode: false
-        });
+        cy.visit("/");
     });
 
     it("Check if Up", () => {
@@ -142,7 +140,10 @@ describe.skip("Scenario 30", () => {
         cy.get("#tot_vat").type(vatAmount);
 
         //Add unique invoice refernce
-        const timestamp = Date.now();
+        const timestamp =
+            new Date().getDate() +
+            new Date().getHours() +
+            new Date().getMinutes();
         const supplierInvoiceRef = "INVChequeRUN" + timestamp;
         cy.get("#supp_own_ref").type(supplierInvoiceRef);
 
@@ -152,7 +153,12 @@ describe.skip("Scenario 30", () => {
         //Dialog title verification
         cy.get(".ui-dialog-title").should("contain", "Invoice/Credit Note");
 
-        cy.get("#narr_desc").type("Test Description");
+        cy.get("#narr_desc").type(
+            "Description" +
+                new Date().getDate() +
+                new Date().getHours() +
+                new Date().getMinutes()
+        );
 
         //GL Code
         cy.selectCostCentre(costCentre);
@@ -187,27 +193,66 @@ describe.skip("Scenario 30", () => {
         //Assert
         cy.get('[axes="LINE_QUANTITY"] > div')
             .invoke("text")
-            .should("contain", quantity);
+            .then(parseFloat)
+            .as("quant");
+
         cy.get('[axes="UNIT_PRICE"] > div')
             .invoke("text")
-            .should("contain", unitprice);
+            .then(parseFloat)
+            .as("unitPrice");
+
+        cy.then(function () {
+            expect(this.quant.toFixed(2), "Compare quantity").to.be.eq(
+                quantity
+            );
+            expect(this.unitPrice.toFixed(2), "Compare unit price").to.be.eq(
+                unitprice
+            );
+        });
         cy.get('[axes="VAT_EXCLUSIVE"] > div')
             .invoke("text")
-            .should("contain", String(netInvoice.toLocaleString()));
+            .then(parseFloat)
+            .as("netInvoice");
+        cy.then(function () {
+            expect(
+                this.netInvoice.toFixed(2),
+                "Compare net invoice value"
+            ).to.be.eq(String(netInvoice.toLocaleString()));
+        });
         cy.get('[axes="VAT_CODE"] > div')
             .invoke("text")
             .should("contain", vatCode);
-        cy.get('[axes="VAT_VALUE"]')
+        cy.get('[axes="VAT_VALUE"] > div')
             .invoke("text")
-            .should("contain", String(vatAmount.toFixed(2)));
+            .then(parseFloat)
+            .as("vatAmount");
+
+        cy.then(function () {
+            expect(
+                this.netInvoice.toFixed(2),
+                "Compare net invoice value"
+            ).to.be.eq(String(netInvoice.toLocaleString()));
+
+            expect(this.vatAmount.toFixed(2), "Compare VAT value").to.be.eq(
+                String(vatAmount.toLocaleString())
+            );
+        });
 
         cy.get('[data-originalvalue="Finish & Save"]').click();
 
         cy.get("*[id*=summary_details]").should("be.visible");
         //Assert
-        cy.get("#tot_value")
-            .invoke("text")
-            .should("eq", String(totalInvoiceValue.toLocaleString()));
+        cy.get("#tot_value").invoke("text").then(parseFloat).as("totalVal");
+        cy.get("#tot_vat").invoke("text").then(parseFloat).as("totalVat");
+
+        cy.then(function () {
+            expect(this.totalVal.toFixed(2), "Validate invoice value").to.be.eq(
+                String(totalInvoiceValue.toLocaleString())
+            );
+            expect(this.totalVat.toFixed(2), "Validate VAT").to.be.eq(
+                String(vatAmount.toLocaleString())
+            );
+        });
         cy.get("#tot_vat")
             .invoke("text")
             .should("contain", String(vatAmount.toLocaleString()));

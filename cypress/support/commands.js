@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 // ***********************************************
 // This example commands.js shows you how to
 // create various custom commands and overwrite
@@ -26,9 +27,9 @@
 
 Cypress.Commands.add("login", (username, password, screenshotFolder) => {
     //Populate username
-    cy.get(".username").should("be.visible").type(`${username}`);
+    cy.get(".username").should("be.visible").click().type(username);
     // Populate password
-    cy.get(".password").should("be.visible").type(`${password}`);
+    cy.get(".password").should("be.visible").type(password);
     cy.screenshot(screenshotFolder + "1");
     // Hit enter
     cy.get(".go_button").should("be.visible").click();

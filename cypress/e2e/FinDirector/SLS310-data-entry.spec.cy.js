@@ -1,9 +1,7 @@
 /* eslint-disable no-undef */
 describe.skip("Scenario 30", () => {
     beforeEach(() => {
-        cy.visit("https://uat-v2.pecuniam-online.co.uk/auth/esr.elogin", {
-            failOnStatusCode: false
-        });
+        cy.visit("/");
     });
 
     it("Multi line Invoice entry - SLS310 as a Finance Director for a school", () => {
