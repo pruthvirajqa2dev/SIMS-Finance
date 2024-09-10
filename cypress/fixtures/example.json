@@ -5,6 +5,7 @@
     "RSS310Q": "RSS310Q",
     "PRL210": "PRL210",
     "PRL610Q": "PRL610Q",
+    "PRL614Q": "PRL614Q",
     "PRL300Q": "PRL300Q",
     "RSS570": "RSS570",
     "NML510": "NML510",
@@ -19,5 +20,7 @@
     "supplierName": "Eastern Water Authority",
     "invoiceDate": "01/09/2023",
     "totalInvoiceValue": 999.78,
-    "period": "2324/01"
+    "period": "2324/01",
+    "CHQ": "CHQ",
+    "BACS": "BACS"
 }

@@ -18,9 +18,9 @@ module.exports = defineConfig({
     json: true,
   },
   chromeWebSecurity: false,
-  numTestsKeptInMemory: 0,
+  numTestsKeptInMemory: 1,
   e2e: {
-    baseUrl: "https://uat-v2.pecuniam-online.co.uk",
+    baseUrl: "http://uat-v2.pecuniam-online.co.uk",
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setupNodeEvents(on, config) {
       // implement node event listeners here
@@ -85,6 +85,23 @@ module.exports = defineConfig({
                 }
               }
             );
+            resolve("File created");
+          });
+        },
+      });
+      on("task", {
+        fsWriteFileWithContent(ext, content) {
+          return new Promise((resolve) => {
+            var fs = require("fs");
+            const filepath = "./Test Data/test" + Date.now() + ext;
+            console.log("Creating file " + filepath);
+            console.log("Content:" + content);
+            fs.writeFile(filepath, content, function (err) {
+              if (err) {
+                console.log("Error" + err);
+                resolve(null);
+              }
+            });
             resolve("File created");
           });
         },

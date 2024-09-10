@@ -749,7 +749,7 @@ describe("Postchecks TC 1 to 9", () => {
     });
 
     //Test case #9
-    it.only("Help Screen", () => {
+    it("Help Screen", () => {
         const screenshotFolder =
             "Postchecks/RunOn" +
             new Date().toLocaleDateString("en-GB").replaceAll("/", "") +

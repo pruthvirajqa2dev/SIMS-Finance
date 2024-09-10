@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-namespace */
 import "cypress-real-events";
 declare namespace Cypress {
     interface Chainable<> {
@@ -6,7 +8,8 @@ declare namespace Cypress {
         selectUsingSearchIcon(acronym: string, valueToSelect: string);
         selectCostCentre(costCentre: string);
         getModifiedTime(filePath: string);
-        fsWriteFile(ext: String);
+        fsWriteFile(ext: string);
+        fsWriteFileWithContent(ext: string, content: string);
         newestFileName(directory: string);
         jobProcessingDialog();
         selectFirstLedgerCodeAndFundCode();

@@ -83,7 +83,7 @@ Cypress.Commands.add("selectFirstLedgerCodeAndFundCode", () => {
         .find('.esr_hover:contains("Select")')
         .eq(0)
         .click();
-
+    cy.wait(3000);
     cy.get("#e2_part_code_lookup").click();
     cy.get('[aria-describedby$="glcodepartlookup_container"]')
         .find(".multibutton_content")
