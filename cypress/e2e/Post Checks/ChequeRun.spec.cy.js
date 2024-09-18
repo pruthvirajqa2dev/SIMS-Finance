@@ -707,7 +707,7 @@ describe("Postchecks TC9 onwards", () => {
                 .should("be.visible");
 
             cy.get("[axes='PAYEE_NAME']")
-                .contains(suppWithCHQ[3])
+                .contains(suppWithCHQ[2])
                 .should("be.visible");
         });
         cy.get("@screenshotCount").then((data) => {

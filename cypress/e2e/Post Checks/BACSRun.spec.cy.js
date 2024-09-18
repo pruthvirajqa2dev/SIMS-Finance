@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 import testData from "../../fixtures/example.json";
+import "cypress-if";
 describe("Postchecks TC9 onwards", () => {
     beforeEach(() => {
         // cy.setResolution([2560, 1440]);
