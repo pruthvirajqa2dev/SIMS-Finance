@@ -20,6 +20,7 @@ module.exports = defineConfig({
   chromeWebSecurity: false,
   numTestsKeptInMemory: 1,
   e2e: {
+    experimentalMemoryManagement: true,
     baseUrl: "http://uat-v2.pecuniam-online.co.uk",
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setupNodeEvents(on, config) {
@@ -142,5 +143,5 @@ module.exports = defineConfig({
       });
     },
   },
-  video: true,
+  video: false,
 });

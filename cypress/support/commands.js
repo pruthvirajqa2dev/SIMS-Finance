@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-undef */
 // ***********************************************
 // This example commands.js shows you how to
@@ -30,10 +31,10 @@ Cypress.Commands.add("login", (username, password, screenshotFolder) => {
     cy.get(".username").should("be.visible").click().type(username);
     // Populate password
     cy.get(".password").should("be.visible").type(password);
-    cy.screenshot(screenshotFolder + "1");
+    // cy.screenshot(screenshotFolder + "1");
     // Hit enter
     cy.get(".go_button").should("be.visible").click();
-    cy.screenshot(screenshotFolder + "2");
+    // cy.screenshot(screenshotFolder + "2");
 
     cy.url().then((url) => {
         cy.log("Current URL is: " + url);
@@ -78,13 +79,15 @@ Cypress.Commands.add("jobProcessingDialog", () => {
 
 Cypress.Commands.add("selectFirstLedgerCodeAndFundCode", () => {
     cy.get("#e1_part_code_lookup").click();
+    cy.wait(1500);
     cy.get('[aria-describedby$="glcodepartlookup_container"]')
         .find(".multibutton_content")
         .find('.esr_hover:contains("Select")')
         .eq(0)
         .click();
-    cy.wait(3000);
+
     cy.get("#e2_part_code_lookup").click();
+    cy.wait(1500);
     cy.get('[aria-describedby$="glcodepartlookup_container"]')
         .find(".multibutton_content")
         .find('.esr_hover:contains("Select")')

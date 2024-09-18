@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 import testData from "../../fixtures/example.json";
+import "cypress-if";
 describe("Postchecks TC9 onwards", () => {
     beforeEach(() => {
         // cy.setResolution([2560, 1440]);
@@ -16,7 +17,7 @@ describe("Postchecks TC9 onwards", () => {
     });
     var screenshotCount = 2;
     //Test case #11
-    it("Cheque Run", () => {
+    it.only("Cheque Run", () => {
         const screenshotFolder =
             "Cheque Run/RunOn" +
             new Date().toLocaleDateString("en-GB").replaceAll("/", "") +
@@ -71,6 +72,7 @@ describe("Postchecks TC9 onwards", () => {
                                 Math.floor(Math.random() * quantArr.length)
                             ].toFixed(2)
                         );
+
                         cy.log("Quantity: " + quantity);
                         let unitPriceArr = [
                             120.12, 230.23, 340.34, 450.45, 560.56, 670.67,
@@ -330,6 +332,7 @@ describe("Postchecks TC9 onwards", () => {
                             .as("unitPriceAlias");
 
                         cy.then(function () {
+                            //Uncomment
                             expect(
                                 this.quantAlias.toFixed(2),
                                 "Compare quantity"
@@ -379,7 +382,31 @@ describe("Postchecks TC9 onwards", () => {
                             cy.screenshot(screenshotFolder + ++data);
                             cy.wrap(data).as("screenshotCount");
                         });
+
                         cy.get('[data-originalvalue="Finish & Save"]').click();
+                        cy.wait(1500);
+                        cy.get(".ui-dialog")
+                            .if()
+                            .then(() => {
+                                cy.log("Handling the dialog for ");
+                                cy.get(
+                                    "*[id$=esr_mb_PRL300Q0_esr_prompt] > div"
+                                )
+                                    .invoke("text")
+                                    .should(
+                                        "contain",
+                                        "The Net Total for all Matched Lines"
+                                    );
+                                cy.get("#esr_messagebox_ok").click();
+                                cy.get('[axes="VAT_EXCLUSIVE"] > div')
+                                    .invoke("text")
+                                    .then((text) => {
+                                        cy.get("#tot_value").type(text);
+                                        cy.get(
+                                            '[data-originalvalue="Finish & Save"]'
+                                        ).click();
+                                    });
+                            });
 
                         cy.get("*[id*=summary_details]").should("be.visible");
                         // cy.get("#tot_value")
@@ -821,410 +848,6 @@ describe("Postchecks TC9 onwards", () => {
             cy.screenshot(screenshotFolder + ++data);
             cy.wrap(data).as("screenshotCount");
         });
-    });
-
-    it.only("BACS Run", () => {
-        const screenshotFolder =
-            "Cheque Run/RunOn" +
-            new Date().toLocaleDateString("en-GB").replaceAll("/", "") +
-            "/" +
-            "Hour " +
-            new Date().getHours() +
-            "/";
-        const chequeOrBacs = "BACS";
-        const username = testData.username;
-        const password = testData.password;
-        cy.task("newestFileName", "./Test Data/" + chequeOrBacs + "*.TXT").then(
-            (fileName) => {
-                cy.log("filename" + fileName);
-                cy.readFile(fileName).then((content) => {
-                    cy.log("Content" + content.split(","));
-                    const suppWithBACS = content.split(",");
-                    cy.log("Arr:" + suppWithBACS.length);
-                    cy.wrap(suppWithBACS).as("listOfSuppliers");
-                    expect(suppWithBACS.length).to.not.be.equal(0);
-                    cy.log(
-                        "Total number of suppliers with CHQ Payment Method =" +
-                            suppWithBACS.length
-                    );
-                    cy.login(username, password, screenshotFolder);
-                    var screen = testData.PRL300Q;
-                    screenshotCount = 2;
-                    cy.wrap(screenshotCount).as("screenshotCount");
-                    for (let i = 0; i < 3; i++) {
-                        let costCentreArr = [
-                            "ESFA Grants",
-                            "Pupil Premium",
-                            "NCTL Grants",
-                            "LA Grants",
-                            "Catering",
-                            "Lettings",
-                            "Music Lessons",
-                            "Services of Staff",
-                            "Donations",
-                            "Capital Funding"
-                        ];
-                        const costCentre =
-                            costCentreArr[
-                                Math.floor(Math.random() * costCentreArr.length)
-                            ];
-                        //############Invoice calculation START #################################
-                        let quantArr = [
-                            1.2, 2.3, 3.4, 4.5, 5.6, 6.7, 7.8, 8.9, 9.1
-                        ];
-                        const quantity = String(
-                            quantArr[
-                                Math.floor(Math.random() * quantArr.length)
-                            ].toFixed(2)
-                        );
-                        cy.log("Quantity: " + quantity);
-                        let unitPriceArr = [
-                            120.12, 230.23, 340.34, 450.45, 560.56, 670.67,
-                            780.78
-                        ];
-                        const unitprice = String(
-                            unitPriceArr[
-                                Math.floor(Math.random() * unitPriceArr.length)
-                            ].toFixed(2)
-                        );
-                        cy.log("Unit price: " + unitprice);
-                        let vatCodeArr = ["EXM", "NON", "RED", "STD", "ZER"];
-                        const vatCode =
-                            vatCodeArr[
-                                Math.floor(Math.random() * vatCodeArr.length)
-                            ];
-                        cy.log("VAT Code: " + vatCode.toString());
-                        var vatPercent;
-                        switch (vatCode.toString()) {
-                            case "EXM":
-                            case "NON":
-                            case "ZER":
-                                vatPercent = 0;
-                                break;
-                            case "RED":
-                                vatPercent = 5;
-                                break;
-                            case "STD":
-                                vatPercent = 20;
-                                break;
-                            default:
-                                vatPercent = undefined;
-                                break;
-                        }
-                        cy.log("Vat Percent: " + vatPercent);
-                        let netInvoice =
-                            Math.round(quantity * unitprice * 100) / 100;
-                        cy.log("Net Invoice: " + netInvoice);
-                        const vatAmount =
-                            Math.round(
-                                ((netInvoice * vatPercent) / 100) * 100
-                            ) / 100;
-                        cy.log("VAT Amount: " + vatAmount);
-
-                        const totalInvoiceValue =
-                            Math.round((netInvoice + vatAmount) * 100) / 100;
-                        cy.log("Total Invoice: " + totalInvoiceValue);
-                        //############Invoice calculation END #################################
-
-                        cy.log(
-                            "Adding invoice for Supplier:" + suppWithBACS[i]
-                        );
-                        //Click Hamburger
-                        cy.log("Click on Hamburger");
-                        cy.get("#banner_navigation_navigate")
-                            .should("be.visible")
-                            .click();
-                        //Click on the text box in Quick launch
-                        cy.log("Type screen in the text box");
-                        cy.get(".quick-lunch")
-                            .eq(1)
-                            .find("#esr_launch_text")
-                            .clear()
-                            .type(`${screen}`);
-
-                        //Click on the menu item displayed
-                        cy.log("Click on the menu item displayed");
-                        cy.get(".ui-menu-item").contains(screen).click();
-                        cy.get("@screenshotCount").then((data) => {
-                            cy.log("screenshotcount :" + data);
-                            cy.screenshot(screenshotFolder + ++data);
-                            cy.wrap(data).as("screenshotCount");
-                        });
-
-                        //Select school
-                        cy.selectUsingSearchIcon(
-                            "company_id",
-                            testData.schoolId
-                        );
-                        cy.get("@screenshotCount").then((data) => {
-                            cy.log("screenshotcount :" + data);
-                            cy.screenshot(screenshotFolder + ++data);
-                            cy.wrap(data).as("screenshotCount");
-                        });
-
-                        cy.log("************PRL300Q screen**************");
-                        cy.log("Click on search button");
-
-                        cy.get("#search_button").click();
-                        cy.get("@screenshotCount").then((data) => {
-                            cy.log("screenshotcount :" + data);
-                            cy.screenshot(screenshotFolder + ++data);
-                            cy.wrap(data).as("screenshotCount");
-                        });
-
-                        //New Button
-                        cy.log("Click in new button(with dropdown)");
-                        cy.get(".multibutton_content")
-                            .find('.esr_multibutton:contains("New")')
-                            .eq(0)
-                            .click();
-                        cy.get("@screenshotCount").then((data) => {
-                            cy.log("screenshotcount :" + data);
-                            cy.screenshot(screenshotFolder + ++data);
-                            cy.wrap(data).as("screenshotCount");
-                        });
-
-                        if (
-                            testData.invoiceType == "Non Purchase Order Invoice"
-                        ) {
-                            cy.get("#invoice_type2")
-                                .check()
-                                .should("be.checked");
-                        } else {
-                            cy.get("#invoice_type2")
-                                .check()
-                                .should("be.checked");
-                        }
-                        cy.get("@screenshotCount").then((data) => {
-                            cy.log("screenshotcount :" + data);
-                            cy.screenshot(screenshotFolder + ++data);
-                            cy.wrap(data).as("screenshotCount");
-                        });
-
-                        cy.get("#select_button").click();
-
-                        cy.get(".esr_breadcrumb_selected").contains(
-                            "Non Purchase Order Details"
-                        );
-
-                        cy.get("#supplier_icon").click();
-                        cy.get('[axes="SUPP_NAME"]')
-                            .contains(suppWithBACS[i])
-                            .parent()
-                            .parent()
-                            .contains("Select")
-                            .click();
-
-                        cy.get('[for="supplier"]')
-                            .eq(1)
-                            .should("have.text", suppWithBACS[i]);
-                        cy.get("#doc_date").type(testData.invoiceDate);
-                        cy.get("@screenshotCount").then((data) => {
-                            cy.log("screenshotcount :" + data);
-                            cy.screenshot(screenshotFolder + ++data);
-                            cy.wrap(data).as("screenshotCount");
-                        });
-
-                        cy.get('[for="authority_code"]').eq(0).click();
-
-                        cy.get(".ui-pnotify-text").should(
-                            "contain",
-                            testData.period
-                        );
-                        cy.get("#tot_value").type(totalInvoiceValue);
-                        cy.get("#tot_vat").type(vatAmount);
-                        cy.get("@screenshotCount").then((data) => {
-                            cy.log("screenshotcount :" + data);
-                            cy.screenshot(screenshotFolder + ++data);
-                            cy.wrap(data).as("screenshotCount");
-                        });
-
-                        //Add unique invoice refernce
-                        const timestamp = String(
-                            "" +
-                                new Date().getDate() +
-                                new Date().getMonth() +
-                                new Date().getHours() +
-                                new Date().getMinutes() +
-                                new Date().getSeconds()
-                        );
-                        const supplierInvoiceRef = "INV" + timestamp;
-                        cy.wrap(supplierInvoiceRef).as("invoiceRef" + i);
-                        cy.get("#supp_own_ref").type(supplierInvoiceRef);
-                        cy.get("@screenshotCount").then((data) => {
-                            cy.log("screenshotcount :" + data);
-                            cy.screenshot(screenshotFolder + ++data);
-                            cy.wrap(data).as("screenshotCount");
-                        });
-
-                        //***Add line
-                        cy.log("Add line");
-                        cy.get(".multibutton_content > .esr_hover")
-                            .contains("Add")
-                            .click();
-
-                        //Dialog title verification
-                        cy.log("Dialog title verification");
-                        cy.get(".ui-dialog-title").should(
-                            "contain",
-                            "Invoice/Credit Note"
-                        );
-                        cy.get("@screenshotCount").then((data) => {
-                            cy.log("screenshotcount :" + data);
-                            cy.screenshot(screenshotFolder + ++data);
-                            cy.wrap(data).as("screenshotCount");
-                        });
-
-                        cy.get("#narr_desc").type("Description" + timestamp);
-
-                        //GL Code
-                        cy.log("GL Code");
-                        cy.selectCostCentre(costCentre);
-                        cy.selectFirstLedgerCodeAndFundCode();
-
-                        cy.get("#line_quantity").type(quantity);
-                        cy.get("#unit_price").type(unitprice);
-                        cy.get("*[id^=ui-id]")
-                            .contains("Invoice/Credit Note")
-                            .click();
-                        cy.get("@screenshotCount").then((data) => {
-                            cy.log("screenshotcount :" + data);
-                            cy.screenshot(screenshotFolder + ++data);
-                            cy.wrap(data).as("screenshotCount");
-                        });
-
-                        cy.get("#vat_code_icon").click();
-
-                        cy.get('[axes="VACODE"] > div')
-                            .contains(vatCode)
-                            .parent()
-                            .parent()
-                            .find("#esr_action")
-                            .click();
-                        cy.get("@screenshotCount").then((data) => {
-                            cy.log("screenshotcount :" + data);
-                            cy.screenshot(screenshotFolder + ++data);
-                            cy.wrap(data).as("screenshotCount");
-                        });
-
-                        cy.get("*[id^=ui-id]")
-                            .contains("Invoice/Credit Note")
-                            .click();
-                        cy.get("#vat_value")
-                            .invoke("val")
-                            .should(
-                                "eq",
-                                vatAmount != 0
-                                    ? vatAmount.toFixed(2).toLocaleString()
-                                    : "0.00"
-                            );
-
-                        // cy.get("#total_line_value")
-                        //     .invoke("val")
-                        //     .should(
-                        //         "eq",
-                        //         totalInvoiceValue.toFixed(2).toString()
-                        //     );
-
-                        cy.get('[data-originalvalue="Save"]').click();
-                        cy.get('[axes="LINE_QUANTITY"] > div')
-                            .invoke("text")
-                            .then(parseFloat)
-                            .as("quantAlias");
-
-                        cy.get('[axes="UNIT_PRICE"] > div')
-                            .invoke("text")
-                            .then(parseFloat)
-                            .as("unitPriceAlias");
-
-                        cy.then(function () {
-                            expect(
-                                this.quantAlias.toFixed(2),
-                                "Compare quantity"
-                            ).to.be.eq(quantity);
-                            expect(
-                                this.unitPriceAlias.toFixed(2),
-                                "Compare unit price"
-                            ).to.be.eq(unitprice);
-                        });
-                        // cy.get('[axes="VAT_EXCLUSIVE"] > div')
-                        //     .invoke("text")
-                        //     .then(parseFloat)
-                        //     .as("netInvoiceAlias");
-                        // cy.then(function () {
-                        //     expect(
-                        //         this.netInvoiceAlias.toFixed(2),
-                        //         "Compare net invoice value"
-                        //     ).to.be.eq(String(netInvoice.toLocaleString()));
-                        // });
-                        cy.get('[axes="VAT_CODE"] > div')
-                            .invoke("text")
-                            .should("contain", vatCode);
-                        cy.get('[axes="VAT_VALUE"] > div')
-                            .invoke("text")
-                            .then(parseFloat)
-                            .as("vatAmountAlias");
-
-                        cy.then(function () {
-                            // expect(
-                            //     this.netInvoiceAlias.toFixed(2),
-                            //     "Compare net invoice value"
-                            // ).to.be.eq(String(netInvoice.toLocaleString()));
-
-                            expect(
-                                this.vatAmountAlias.toFixed(2),
-                                "Compare VAT value"
-                            ).to.be.eq(
-                                String(
-                                    vatAmount != 0
-                                        ? vatAmount.toFixed(2).toLocaleString()
-                                        : "0.00"
-                                )
-                            );
-                        });
-                        cy.get("@screenshotCount").then((data) => {
-                            cy.log("screenshotcount :" + data);
-                            cy.screenshot(screenshotFolder + ++data);
-                            cy.wrap(data).as("screenshotCount");
-                        });
-                        cy.get('[data-originalvalue="Finish & Save"]').click();
-
-                        cy.get("*[id*=summary_details]").should("be.visible");
-                        // cy.get("#tot_value")
-                        //     .invoke("text")
-                        //     .then(parseFloat)
-                        //     .as("totalValAlias");
-                        cy.get("#tot_vat")
-                            .invoke("text")
-                            .then(parseFloat)
-                            .as("totalVatAlias");
-
-                        cy.then(function () {
-                            // expect(
-                            //     this.totalValAlias.toFixed(2),
-                            //     "Validate invoice value"
-                            // ).to.be.eq(String(totalInvoiceValue.toLocaleString()));
-                            expect(
-                                this.totalVatAlias.toFixed(2),
-                                "Validate VAT"
-                            ).to.be.eq(
-                                String(
-                                    vatAmount != 0
-                                        ? vatAmount.toFixed(2).toLocaleString()
-                                        : "0.00"
-                                )
-                            );
-                        });
-                        cy.get("@screenshotCount").then((data) => {
-                            cy.log("screenshotcount :" + data);
-                            cy.screenshot(screenshotFolder + ++data);
-                            cy.wrap(data).as("screenshotCount");
-                        });
-                        cy.get("#ok_button").click();
-                    }
-                });
-            }
-        );
     });
     it("test", () => {
         const quantity = 1; // String(quantArr[Math.floor(Math.random() * quantArr.length)])

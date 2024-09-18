@@ -268,7 +268,21 @@ describe("Scenario 30", () => {
         });
         cy.screenshot(screenshotFolder + ++i);
         cy.get('[data-originalvalue="Finish & Save"]').click();
-
+        cy.get(".ui-dialog")
+            .if()
+            .then(() => {
+                cy.log("Handling the dialog for ");
+                cy.get("*[id$=esr_mb_PRL300Q0_esr_prompt] > div")
+                    .invoke("text")
+                    .should("contain", "The Net Total for all Matched Lines");
+                cy.get("#esr_messagebox_ok").click();
+                cy.get('[axes="VAT_EXCLUSIVE"] > div')
+                    .invoke("text")
+                    .then((text) => {
+                        cy.get("#tot_value").type(text);
+                        cy.get('[data-originalvalue="Finish & Save"]').click();
+                    });
+            });
         cy.get("*[id*=summary_details]").should("be.visible");
         //Assert
         // cy.get("#tot_value")
