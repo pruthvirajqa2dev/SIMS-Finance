@@ -1,5 +1,7 @@
 /* eslint-disable no-undef */
-describe.skip("SIMS Finance Trial", () => {
+// import * as allure from "allure-cypress";
+const allure = Cypress.Allure.reporter.getInterface();
+describe.only("SIMS Finance Trial", () => {
     beforeEach(() => {
         cy.visit("/");
     });
@@ -19,13 +21,23 @@ describe.skip("SIMS Finance Trial", () => {
         return false;
     });
     it.only("Read PDF", () => {
+        cy.allure().step("Custom log: Starting the test");
+        cy.allure().severity("critical");
+        allure.owner("Pruthviraj Pardeshi");
+        allure.tag("Web interface");
+        allure.tag("Authentication");
+        // allure.severity(CRITICAL);
+        allure.parentSuite("Tests for Reading PDF");
+        allure.suite("Tests for Finclerk Reading PDF");
+        allure.subSuite("Tests for readpdf");
         const screenshotFolder = "Read PDF";
         const username = "FINCLERK01D130";
         const password = "SIMSFinance2018#";
         const screen = "RSS310Q";
+        // allure.step("Step 1", () => {
 
+        // });
         cy.login(username, password, screenshotFolder);
-
         //Click Hamburger
         cy.log("Click on Hamburger");
         cy.get("#banner_navigation_navigate").should("be.visible").click();

@@ -4,5 +4,10 @@
         "lib": ["es5", "dom"],
         "types": ["cypress", "node", "cypress-real-events"]
     },
-    "include": ["**/*.ts", "e2e/FinClerk/RSS310Q.spec.cy.js"]
+    "include": [
+        "../node_modules/@shelex/cypress-allure-plugin/reporter",
+        "../node_modules/cypress",
+        "**/*.ts",
+        "e2e/FinClerk/RSS310Q.spec.cy.js"
+    ]
 }

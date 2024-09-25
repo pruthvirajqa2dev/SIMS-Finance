@@ -2,6 +2,7 @@
 import testData from "../../fixtures/example.json";
 import "cypress-if";
 describe("Postchecks TC9 onwards", () => {
+    let logs = []; // Temporary store for logs
     beforeEach(() => {
         // cy.setResolution([2560, 1440]);
         cy.viewport("macbook-13");
@@ -14,6 +15,28 @@ describe("Postchecks TC9 onwards", () => {
         // failing the test
         cy.log(err);
         return false;
+    });
+    Cypress.on("log:added", (log) => {
+        console.log("Added log:" + logs);
+        // Instead of calling cy.task directly, store logs
+        logs.push({
+            name: log.displayName,
+            message: log.message
+        });
+    });
+
+    afterEach(() => {
+        // After each test, send the stored logs to Allure via cy.task()
+        cy.task("allure:logBatch", logs).then(() => {
+            logs.forEach((log) => {
+                cy.allure().attachment(
+                    log.displayName,
+                    log.message,
+                    "text/plain"
+                );
+            });
+        }); // Sending all logs at once
+        logs = []; // Reset logs after sending
     });
     var screenshotCount;
 
@@ -53,6 +76,34 @@ describe("Postchecks TC9 onwards", () => {
         cy.log("Click on the menu item displayed");
         cy.get(".ui-menu-item").contains(screen).click();
         cy.screenshot(screenshotFolder);
+        cy.get('[axes="STATUS"]')
+            .contains("Entered/Not Confirmed")
+            .if()
+            .parent()
+            .parent()
+            .find("#esr_action")
+            .find(".multibutton_content > a")
+            .click()
+            .then(() => {
+                cy.get(".ui-menu-item").contains("Cancel BACS Run").click();
+                cy.get("*[id^=ui-id]")
+                    .contains("BACS Processing")
+                    .should("exist");
+                cy.get("*[id$=PRL614Q0_esr_prompt] > div")
+                    .invoke("text")
+                    .should(
+                        "contain",
+                        "This will cancel the current BACS run for School ID " +
+                            testData.schoolId
+                    );
+                cy.get("#esr_messagebox_ok").click();
+                cy.get("#processing_controls", { timeout: 1000000 })
+                    .contains("Processing: Processing Complete", {
+                        timeout: 1000000
+                    })
+                    .should("be.visible");
+                //
+            });
 
         cy.get('[axes="STATUS"]')
             .contains("Entered/Not Confirmed")
@@ -281,12 +332,40 @@ describe("Postchecks TC9 onwards", () => {
                         cy.get("*[id^=ui-id]")
                             .contains("Invoice/Credit Note")
                             .click();
+
+                        cy.get("#vat_value")
+                            .invoke("val")
+                            .then((text) => {
+                                expect(
+                                    String(
+                                        text != 0
+                                            ? text.toLocaleString({
+                                                  minimumFractionDigits: 2,
+                                                  maximumFractionDigits: 2
+                                              })
+                                            : "0.00"
+                                    ),
+                                    "Compare VAT value"
+                                ).to.be.eq(
+                                    String(
+                                        vatAmount != 0
+                                            ? vatAmount.toLocaleString({
+                                                  minimumFractionDigits: 2,
+                                                  maximumFractionDigits: 2
+                                              })
+                                            : "0.00"
+                                    )
+                                );
+                            });
                         cy.get("#vat_value")
                             .invoke("val")
                             .should(
                                 "eq",
                                 vatAmount != 0
-                                    ? vatAmount.toLocaleString()
+                                    ? vatAmount.toLocaleString({
+                                          minimumFractionDigits: 2,
+                                          maximumFractionDigits: 2
+                                      })
                                     : "0.00"
                             );
 
@@ -333,22 +412,26 @@ describe("Postchecks TC9 onwards", () => {
                             .should("contain", vatCode);
                         cy.get('[axes="VAT_VALUE"] > div')
                             .invoke("text")
-                            .then(parseFloat)
                             .as("vatAmountAlias");
 
                         cy.then(function () {
-                            // expect(
-                            //     this.netInvoiceAlias.toFixed(2),
-                            //     "Compare net invoice value"
-                            // ).to.be.eq(String(netInvoice.toLocaleString()));
-
                             expect(
-                                this.vatAmountAlias.toFixed(2),
+                                String(
+                                    this.vatAmountAlias != 0
+                                        ? this.vatAmountAlias.toLocaleString({
+                                              minimumFractionDigits: 2,
+                                              maximumFractionDigits: 2
+                                          })
+                                        : "0.00"
+                                ),
                                 "Compare VAT value"
                             ).to.be.eq(
                                 String(
                                     vatAmount != 0
-                                        ? vatAmount.toLocaleString()
+                                        ? vatAmount.toLocaleString({
+                                              minimumFractionDigits: 2,
+                                              maximumFractionDigits: 2
+                                          })
                                         : "0.00"
                                 )
                             );
@@ -356,27 +439,30 @@ describe("Postchecks TC9 onwards", () => {
                         cy.screenshot(screenshotFolder);
 
                         cy.get('[data-originalvalue="Finish & Save"]').click();
-                        cy.get(".ui-dialog")
+
+                        cy.log("Handling the dialog for ");
+                        cy.get("*[id$=esr_mb_PRL300Q0_esr_prompt] > div", {
+                            timeout: 10000
+                        })
                             .if()
-                            .then(() => {
-                                cy.log("Handling the dialog for ");
+                            .invoke("text")
+                            .should(
+                                "contain",
+                                "The Net Total for all Matched Lines"
+                            );
+                        cy.get("#esr_messagebox_ok", { timeout: 10000 })
+                            .if()
+                            .click();
+                        cy.get('[axes="VAT_EXCLUSIVE"] > div', {
+                            timeout: 10000
+                        })
+                            .if()
+                            .invoke("text")
+                            .then((text) => {
+                                cy.get("#tot_value").type(text);
                                 cy.get(
-                                    "*[id$=esr_mb_PRL300Q0_esr_prompt] > div"
-                                )
-                                    .invoke("text")
-                                    .should(
-                                        "contain",
-                                        "The Net Total for all Matched Lines"
-                                    );
-                                cy.get("#esr_messagebox_ok").click();
-                                cy.get('[axes="VAT_EXCLUSIVE"] > div')
-                                    .invoke("text")
-                                    .then((text) => {
-                                        cy.get("#tot_value").type(text);
-                                        cy.get(
-                                            '[data-originalvalue="Finish & Save"]'
-                                        ).click();
-                                    });
+                                    '[data-originalvalue="Finish & Save"]'
+                                ).click();
                             });
                         cy.get("*[id*=summary_details]").should("be.visible");
                         // cy.get("#tot_value")
@@ -399,7 +485,10 @@ describe("Postchecks TC9 onwards", () => {
                             ).to.be.eq(
                                 String(
                                     vatAmount != 0
-                                        ? vatAmount.toLocaleString()
+                                        ? vatAmount.toLocaleString({
+                                              minimumFractionDigits: 2,
+                                              maximumFractionDigits: 2
+                                          })
                                         : "0.00"
                                 )
                             );
@@ -530,11 +619,22 @@ describe("Postchecks TC9 onwards", () => {
                         cy.log("Newest unzipped PDF:" + fileName);
                         cy.task("readPdf", fileName).then(function (data) {
                             // cy.log("Text: " + data.text);
-                            cy.wrap(data.text).as("PDFdata");
+                            cy.wrap(
+                                data.text.replaceAll(/(\r\n|\n|\r)/gm, "")
+                            ).as("PDFdata");
                             cy.get("@PDFdata")
-                                .should("contain", suppWithBACS[3])
-                                .should("contain", suppWithBACS[4])
-                                .should("contain", suppWithBACS[5]);
+                                .should("contain", suppWithBACS[3], {
+                                    message:
+                                        "First supplier failed after clicking print report"
+                                })
+                                .should("contain", suppWithBACS[4], {
+                                    message:
+                                        "Second supplier failed after clicking print report"
+                                })
+                                .should("contain", suppWithBACS[5], {
+                                    message:
+                                        "Third supplier failed after clicking print report"
+                                });
                         });
                     });
                 });
@@ -565,11 +665,24 @@ describe("Postchecks TC9 onwards", () => {
                             cy.log("Newest unzipped PDF:" + fileName);
                             cy.task("readPdf", fileName).then(function (data) {
                                 // cy.log("Text: " + data.text);
-                                cy.wrap(data.text).as("PDFdata");
+                                // const text = data.text.replace("\n", "");
+                                // cy.log("Text is:" + text);
+                                cy.wrap(
+                                    data.text.replaceAll(/(\r\n|\n|\r)/gm, "")
+                                ).as("PDFdata");
                                 cy.get("@PDFdata")
-                                    .should("contain", suppWithBACS[3])
-                                    .should("contain", suppWithBACS[4])
-                                    .should("contain", suppWithBACS[5]);
+                                    .should("contain", suppWithBACS[3], {
+                                        message:
+                                            "First supplier failed after clicking save all"
+                                    })
+                                    .should("contain", suppWithBACS[4], {
+                                        message:
+                                            "Second supplier failed after clicking save all"
+                                    })
+                                    .should("contain", suppWithBACS[5], {
+                                        message:
+                                            "Third supplier failed after clicking save all"
+                                    });
                             });
                         });
                     });
@@ -626,11 +739,22 @@ describe("Postchecks TC9 onwards", () => {
                         cy.log("Newest unzipped PDF:" + fileName);
                         cy.task("readPdf", fileName).then(function (data) {
                             // cy.log("Text: " + data.text);
-                            cy.wrap(data.text).as("PDFdata");
+                            cy.wrap(
+                                data.text.replaceAll(/(\r\n|\n|\r)/gm, "")
+                            ).as("PDFdata");
                             cy.get("@PDFdata")
-                                .should("contain", suppWithBACS[3])
-                                .should("contain", suppWithBACS[4])
-                                .should("contain", suppWithBACS[5]);
+                                .should("contain", suppWithBACS[3], {
+                                    message:
+                                        "First supplier failed after downloading individual report"
+                                })
+                                .should("contain", suppWithBACS[4], {
+                                    message:
+                                        "Second supplier failed after downloading individual report"
+                                })
+                                .should("contain", suppWithBACS[5], {
+                                    message:
+                                        "Third supplier failed after downloading individual report"
+                                });
                         });
                     });
                 });
@@ -665,9 +789,14 @@ describe("Postchecks TC9 onwards", () => {
         cy.screenshot(screenshotFolder);
     });
     it("test", () => {
-        const vatValue = 1193.7976;
+        const vatValue = "1,020.22";
 
-        cy.log(vatValue.toLocaleString());
+        cy.log(
+            vatValue.toLocaleString({
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })
+        );
 
         // const quantity = 1; // String(quantArr[Math.floor(Math.random() * quantArr.length)])
         // cy.log("Quantity: " + quantity);
@@ -817,7 +946,9 @@ describe("Postchecks TC9 onwards", () => {
                         cy.log("Newest unzipped PDF:" + fileName);
                         cy.task("readPdf", fileName).then(function (data) {
                             // cy.log("Text: " + data.text);
-                            cy.wrap(data.text).as("PDFdata");
+                            cy.wrap(
+                                data.text.replaceAll(/(\r\n|\n|\r)/gm, "")
+                            ).as("PDFdata");
                             cy.get("@PDFdata")
                                 .should("contain", suppWithBACS[0])
                                 .should("contain", suppWithBACS[1])
@@ -850,7 +981,9 @@ describe("Postchecks TC9 onwards", () => {
                             cy.log("Newest unzipped PDF:" + fileName);
                             cy.task("readPdf", fileName).then(function (data) {
                                 // cy.log("Text: " + data.text);
-                                cy.wrap(data.text).as("PDFdata");
+                                cy.wrap(
+                                    data.text.replaceAll(/(\r\n|\n|\r)/gm, "")
+                                ).as("PDFdata");
                                 cy.get("@PDFdata")
                                     .should("contain", suppWithBACS[0])
                                     .should("contain", suppWithBACS[1])

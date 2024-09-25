@@ -505,7 +505,7 @@ describe("Postchecks TC 1 to 9", () => {
     });
 
     //Test case #7
-    it.only("SIMS_TB_SCHOOL - XQuery Report - Submit", () => {
+    it("SIMS_TB_SCHOOL - XQuery Report - Submit", () => {
         const screenshotFolder =
             "Postchecks/RunOn" +
             new Date().toLocaleDateString("en-GB").replaceAll("/", "") +

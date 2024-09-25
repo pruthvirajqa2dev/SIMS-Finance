@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable no-undef */
+const allureWriter = require("@shelex/cypress-allure-plugin/writer");
+//require("@shelex/cypress-allure-plugin");
 const { defineConfig } = require("cypress");
 const fs = require("fs");
 const pdf = require("pdf-parse");
@@ -12,6 +14,7 @@ module.exports = defineConfig({
   viewportHeight: 800,
   reporter: "cypress-mochawesome-reporter",
   reporterOptions: {
+    allure: true,
     reportDir: "reports/mochawesome",
     overwrite: false,
     html: false,
@@ -22,10 +25,10 @@ module.exports = defineConfig({
   e2e: {
     experimentalMemoryManagement: true,
     baseUrl: "http://uat-v2.pecuniam-online.co.uk",
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setupNodeEvents(on, config) {
       // implement node event listeners here
-      require("cypress-mochawesome-reporter/plugin")(on);
+
+      // require("cypress-mochawesome-reporter/plugin")(on);
       on("task", {
         readPdf(pdfPath) {
           return new Promise((resolve) => {
@@ -141,6 +144,39 @@ module.exports = defineConfig({
           });
         },
       });
+      // on("file:preprocessor", webpackPreprocessor);
+      on("task", {
+        "allure:logBatch": (logs) => {
+          logs.forEach((log) => {
+            // Specify the location where Allure stores its results
+            const resultsDir = "allure-results";
+
+            // Create a custom file for logs
+            const logFile = path.join(
+              resultsDir,
+              "cypress-logs-" +
+                new Date().getDate() +
+                new Date().getHours() +
+                ".txt"
+            );
+
+            // Ensure the directory exists
+            if (!fs.existsSync(resultsDir)) {
+              fs.mkdirSync(resultsDir);
+            }
+
+            // Append the log message to the log file
+            const logMessage = `${log.displayName}: ${log.message}\n`;
+            fs.appendFileSync(logFile, logMessage);
+          });
+          return null;
+        },
+      });
+      allureWriter(on, config);
+      return config;
+    },
+    env: {
+      allureReuseAfterSpec: true,
     },
   },
   video: false,

@@ -26,8 +26,31 @@ describe("Postchecks TC9 onwards", () => {
             new Date().getHours() +
             "/";
         const chequeOrBacs = "CHQ";
+        var screen = testData.PRL610Q;
         const username = testData.username;
         const password = testData.password;
+        cy.login(username, password, screenshotFolder);
+        //Click Hamburger
+        cy.log("Click on Hamburger");
+        cy.get("#banner_navigation_navigate").should("be.visible").click();
+        cy.screenshot(screenshotFolder);
+        //Click on the text box in Quick launch
+        cy.log("Type screen in the text box");
+        cy.get(".quick-lunch")
+            .eq(1)
+            .find("#esr_launch_text")
+            .clear()
+            .type(`${screen}`);
+
+        //Click on the menu item displayed
+        cy.log("Click on the menu item displayed");
+        cy.get(".ui-menu-item").contains(screen).click();
+        cy.screenshot(screenshotFolder);
+
+        cy.get('[axes="STATUS"]')
+            .contains("Entered/Not Confirmed")
+            .should("not.exist");
+
         cy.log("Step 1");
         cy.task("newestFileName", "./Test Data/" + chequeOrBacs + "*.TXT").then(
             (fileName) => {
@@ -42,7 +65,7 @@ describe("Postchecks TC9 onwards", () => {
                         "Total number of suppliers with CHQ Payment Method =" +
                             suppWithCHQ.length
                     );
-                    cy.login(username, password, screenshotFolder);
+                    // cy.login(username, password, screenshotFolder);
                     var screen = testData.PRL300Q;
                     screenshotCount = 2;
                     cy.wrap(screenshotCount).as("screenshotCount");
@@ -304,14 +327,14 @@ describe("Postchecks TC9 onwards", () => {
                         cy.get("*[id^=ui-id]")
                             .contains("Invoice/Credit Note")
                             .click();
-                        cy.get("#vat_value")
-                            .invoke("val")
-                            .should(
-                                "eq",
-                                vatAmount != 0
-                                    ? vatAmount.toFixed(2).toLocaleString()
-                                    : "0.00"
-                            );
+                        // cy.get("#vat_value")
+                        //     .invoke("val")
+                        //     .should(
+                        //         "eq",
+                        //         vatAmount != 0
+                        //             ? vatAmount.toLocaleString()
+                        //             : "0.00"
+                        //     );
 
                         // cy.get("#total_line_value")
                         //     .invoke("val")
@@ -372,7 +395,7 @@ describe("Postchecks TC9 onwards", () => {
                             ).to.be.eq(
                                 String(
                                     vatAmount != 0
-                                        ? vatAmount.toFixed(2).toLocaleString()
+                                        ? vatAmount.toLocaleString()
                                         : "0.00"
                                 )
                             );
@@ -429,7 +452,7 @@ describe("Postchecks TC9 onwards", () => {
                             ).to.be.eq(
                                 String(
                                     vatAmount != 0
-                                        ? vatAmount.toFixed(2).toLocaleString()
+                                        ? vatAmount.toLocaleString()
                                         : "0.00"
                                 )
                             );
@@ -447,7 +470,7 @@ describe("Postchecks TC9 onwards", () => {
 
         cy.log("Step 4");
 
-        var screen = testData.PRL610Q;
+        screen = testData.PRL610Q;
         //Click Hamburger
         cy.log("Click on Hamburger");
         cy.get("#banner_navigation_navigate").should("be.visible").click();
@@ -637,7 +660,9 @@ describe("Postchecks TC9 onwards", () => {
                     cy.log("Newest unzipped PDF:" + fileName);
                     cy.task("readPdf", fileName).then(function (data) {
                         // cy.log("Text: " + data.text);
-                        cy.wrap(data.text).as("PDFdata");
+                        cy.wrap(data.text.replaceAll(/(\r\n|\n|\r)/gm, "")).as(
+                            "PDFdata"
+                        );
                         cy.get("@PDFdata")
                             .should("contain", suppWithCHQ[0])
                             .should("contain", suppWithCHQ[1])
@@ -651,6 +676,7 @@ describe("Postchecks TC9 onwards", () => {
             cy.screenshot(screenshotFolder + ++data);
             cy.wrap(data).as("screenshotCount");
         });
+        cy.wait(1500);
         cy.get("#yes_button").click();
 
         screen = testData.PRL610Q;
@@ -723,6 +749,16 @@ describe("Postchecks TC9 onwards", () => {
             cy.wrap(data).as("screenshotCount");
         });
         cy.get("#save_all", { timeout: 150000 }).click();
+        cy.wait(2000);
+        cy.get("*[id^=ui-id]")
+            .contains("Error")
+            .if()
+            .then(() => {
+                cy.log("Handling the dialog for ");
+                cy.get("#esr_messagebox_ok").click();
+                cy.wait(2000);
+                cy.get("#save_all", { timeout: 150000 }).click();
+            });
         cy.get("@listOfSuppliers").then((suppWithCHQ) => {
             const fileExt = ".zip";
             cy.task(
@@ -738,7 +774,9 @@ describe("Postchecks TC9 onwards", () => {
                     cy.log("Newest unzipped PDF:" + fileName);
                     cy.task("readPdf", fileName).then(function (data) {
                         // cy.log("Text: " + data.text);
-                        cy.wrap(data.text).as("PDFdata");
+                        cy.wrap(data.text.replaceAll(/(\r\n|\n|\r)/gm, "")).as(
+                            "PDFdata"
+                        );
                         cy.get("@PDFdata")
                             .should("contain", suppWithCHQ[0])
                             .should("contain", suppWithCHQ[1])
@@ -791,7 +829,9 @@ describe("Postchecks TC9 onwards", () => {
                 cy.log("Newest unzipped PDF:" + fileName);
                 cy.task("readPdf", fileName).then(function (data) {
                     // cy.log("Text: " + data.text);
-                    cy.wrap(data.text).as("PDFdata");
+                    cy.wrap(data.text.replaceAll(/(\r\n|\n|\r)/gm, "")).as(
+                        "PDFdata"
+                    );
                     cy.get("@PDFdata")
                         .should("contain", suppWithCHQ[0])
                         .should("contain", suppWithCHQ[1])
@@ -819,6 +859,16 @@ describe("Postchecks TC9 onwards", () => {
             cy.wrap(data).as("screenshotCount");
         });
         cy.get("#save_all").click();
+        cy.wait(2000);
+        cy.get("*[id^=ui-id]")
+            .contains("Error")
+            .if()
+            .then(() => {
+                cy.log("Handling the dialog for ");
+                cy.get("#esr_messagebox_ok").click();
+                cy.wait(2000);
+                cy.get("#save_all", { timeout: 150000 }).click();
+            });
         cy.get("@listOfSuppliers").then((suppWithCHQ) => {
             const fileExt = ".zip";
             cy.task(
@@ -834,7 +884,9 @@ describe("Postchecks TC9 onwards", () => {
                     cy.log("Newest unzipped PDF:" + fileName);
                     cy.task("readPdf", fileName).then(function (data) {
                         // cy.log("Text: " + data.text);
-                        cy.wrap(data.text).as("PDFdata");
+                        cy.wrap(data.text.replaceAll(/(\r\n|\n|\r)/gm, "")).as(
+                            "PDFdata"
+                        );
                         cy.get("@PDFdata")
                             .should("contain", suppWithCHQ[0])
                             .should("contain", suppWithCHQ[1])

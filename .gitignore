@@ -12,3 +12,6 @@
 **/*.pdf
 **/*.zip
 **/reports/mochawesome
+**/allure-report
+**/allure-report - Copy
+**/allure-results

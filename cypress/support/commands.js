@@ -25,7 +25,32 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+/*
+    Ref: https://docs.cypress.io/api/cypress-api/custom-commands.html#Overwrite-Existing-Commands
+    Add this to /cypress/support/commands.js
+  */
+Cypress.Commands.overwrite(
+    "should",
+    (originalFn, actual, assertion, expected, options) => {
+        if (options && options.message) {
+            const listener = (error, runnable) => {
+                error.name = "CustomError";
+                error.message = options.message;
+                throw error; // throw error to have test still fail
+            };
 
+            const removeListener = () => {
+                cy.removeListener("fail", listener);
+                cy.removeListener("command:end", removeListener);
+            };
+
+            cy.on("fail", listener);
+            cy.on("command:end", removeListener);
+        }
+
+        return originalFn(actual, assertion, expected, options);
+    }
+);
 Cypress.Commands.add("login", (username, password, screenshotFolder) => {
     //Populate username
     cy.get(".username").should("be.visible").click().type(username);

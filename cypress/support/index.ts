@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-namespace */
+import "@shelex/cypress-allure-plugin";
 import "cypress-real-events";
 declare namespace Cypress {
     interface Chainable<> {
@@ -13,5 +14,6 @@ declare namespace Cypress {
         newestFileName(directory: string);
         jobProcessingDialog();
         selectFirstLedgerCodeAndFundCode();
+        "allure:logBatch";
     }
 }

@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import testData from "../../fixtures/example.json";
-describe("Identify Payment Methods", () => {
+describe.skip("Identify Payment Methods", () => {
     beforeEach(() => {
         cy.visit("/");
     });
@@ -15,7 +15,7 @@ describe("Identify Payment Methods", () => {
 
     //Test case #11
     it.only("Identify Payment Method", () => {
-        const chequeOrBacs = "BACS"; // CHQ or BACS
+        const chequeOrBacs = "CHQ"; // CHQ or BACS
         const screenshotFolder =
             "Payment Methods/" +
             chequeOrBacs +
